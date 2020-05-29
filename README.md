@@ -5,7 +5,7 @@
 
 ## Backend
 
-"pip install -r requirements.txt" pour avoir toutes les librairies python.1
+"pip install -r requirements.txt" pour avoir toutes les librairies python.
 
 ## Config.json
 
