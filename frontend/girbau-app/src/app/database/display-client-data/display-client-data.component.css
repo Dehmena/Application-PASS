@@ -1,0 +1,81 @@
+.main-content {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 925px;
+    min-width: 800px;
+}
+
+.content {
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+.column-client-number {
+    width: 19% !important;
+
+}
+
+.header-client-number {
+    width: 19% !important;
+
+}
+
+.row-client-number {
+}
+
+
+
+.column-client-name {
+    width: 35% !important;
+}
+
+.header-client-name {
+    width: 35% !important;
+}
+
+.row-client-name {
+}
+
+.column-client-mail {
+    width: 35% !important;
+}
+
+.header-client-mail {
+    width: 35% !important;
+}
+
+.row-client-mail {
+}
+
+
+.header-separation {
+    width: 1% !important;
+}
+
+.column-edit {
+}
+
+.header-edit {
+    width: 0.01% !important;
+}
+
+.row-edit {
+}
+
+
+.input-client-number {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-client-name {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-client-mail {
+    width: 90% !important;
+    padding-top: 2px !important;
+}

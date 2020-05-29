@@ -1,0 +1,44 @@
+<div *ngIf="isGetParametersLoading" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+<div [hidden]="isGetParametersLoading||!isGetParametersSuccessful" class="main-content">
+    <mat-card style="padding-top: 0" class="settings-content mat-elevation-z5">
+        <mat-card-content style="margin: 0; padding: 0">
+            <div style="padding-top: 10px;">
+                <quill-editor *ngIf="!isEditingMailSignature"
+                              [(ngModel)]="mailSignatureUpdated"
+                              [readOnly]="true"
+                              [modules]="{toolbar: false}"
+                              [placeholder]="'Passez en mode Edition pour définir une signature d\'e-mail...'">
+                </quill-editor>
+
+                <quill-editor *ngIf="isEditingMailSignature"
+                              [(ngModel)]="mailSignatureUpdated"
+                              format="html"
+                              [modules]="toolbar"
+                              [placeholder]="'Écrivez la signature de l\'e-mail ici...'"
+                              [preserveWhitespace]="true">
+                </quill-editor>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions *ngIf="!isEditingMailSignature" style="margin-top: 10px; padding-left: 7px;" align="start">
+            <button mat-raised-button class="button-black" (click)=toggleEditModeSignatureTemplate()>Modifier le modèle
+                de signature d'e-mail
+            </button>
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="isEditingMailSignature" align="start"
+                          style="margin-top: 10px; padding-left: 7px; align-items: center; display: flex">
+            <button mat-raised-button class="button-blue button-disabled" [disabled]="isUpdateMailSignatureLoading"
+                    style="width: 100px" (click)=updateMailSignature()>Valider
+            </button>
+            <button mat-raised-button class="button-black button-disabled" [disabled]="isUpdateMailSignatureLoading"
+                    style="width: 100px" (click)=toggleEditModeSignatureTemplate()>Annuler
+            </button>
+            <mat-spinner style="margin-left: 8px" [diameter]="30" *ngIf="isUpdateMailSignatureLoading"></mat-spinner>
+        </mat-card-actions>
+
+    </mat-card>
+</div>

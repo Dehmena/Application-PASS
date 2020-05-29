@@ -1,0 +1,202 @@
+<div class="title-dialog" mat-dialog-title>
+    <span>Importer des données</span>
+    <mat-icon class="no-select" style="margin-top: 4px !important;">library_add</mat-icon>
+</div>
+
+<mat-dialog-content class="content-dialog">
+    <div *ngIf="!displayResultCsv">
+        <div style="font-size: 1.10em; font-weight: bolder; text-align: center">Veuillez choisir le mode d'importation
+            des données
+        </div>
+        <div style="margin-top: 5px">
+            <span style="margin-right: 15px">Ajouter et/ou remplacer des données à la base de données actuelle</span>
+            <input id="fileSelectorKeepDatabase" type="file" accept=".csv" style="display: none"
+                   (change)="handleFileInput($event['target']['files'], true)"
+                   onclick="this.value=null;">
+            <button mat-raised-button
+                    class="button-black button-disabled"
+                    [disabled]="isLoadingProcessCsv"
+                    (click)="openFileSelector(true)">Choisir un fichier CSV
+            </button>
+        </div>
+        <div style="margin-top: 5px; margin-bottom: 10px;">
+            <span style="margin-right: 21px">Supprimer la base de données actuelles puis importer les données</span>
+            <input id="fileSelectorDeleteDatabase" type="file" accept=".csv" style="display: none"
+                   (change)="handleFileInput($event['target']['files'], false)"
+                   onclick="this.value=null;">
+            <button mat-raised-button
+                    class="button-black button-disabled"
+                    [disabled]="isLoadingProcessCsv"
+                    (click)="openFileSelector(false)">Choisir un fichier CSV
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="displayResultCsv">
+        <div style="text-align: center; margin-bottom: 10px; font-weight: bolder; font-size: 1.05em;"> Fichier CSV
+            : {{csvFile.name}}</div>
+
+        <div *ngIf="!hasErrorImportingCsv&&keepExistingDatabase">
+            <div *ngIf="hasConflicts">
+                <div style="margin-bottom: 5px; color: #d5912d">
+                    <mat-icon style="vertical-align: bottom;">warning</mat-icon>
+                    <span style="margin-left: 10px">Ce fichier CSV comporte des conflits avec la base de données actuelle. Veuillez les résoudres pour commencer l'importation des données.</span>
+                </div>
+
+                <div>Données du CSV : {{totalNumberOfData}}</div>
+                <div style="display: flex; justify-content: space-between; padding-bottom: 10px">
+                    <div>Conflits avec la base de données actuelle
+                        : {{conflictedData.length}}
+                    </div>
+                    <div style="margin-top: -19px;">
+                        <button mat-raised-button class="button-black" style="font-size: 0.75em"
+                                (click)="selectAllConflictReplaceChoice(true)">Remplacer par les données CSV
+                        </button>
+                        <button mat-raised-button class="button-black" style="margin-left: 10px; margin-right: 5px; font-size: 0.75em"
+                                (click)="selectAllConflictReplaceChoice(false)">Conserver les données actuelles
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: flex">
+                    <div class="column-0"></div>
+                    <div class="column-1">Numéro</div>
+                    <div class="column-2">Date</div>
+                    <div class="column-3">Montant total</div>
+                    <div class="column-4">Numéro client</div>
+                    <div class="column-5">Etat</div>
+                </div>
+
+                <div style="padding-top: 5px; overflow-y: auto; height: 250px; border: 1px solid lightgray">
+                    <div *ngFor="let conflict of conflictedData; let index = index;">
+                        <mat-radio-group [(ngModel)]="conflictedReplaceDataChoice[index]">
+                            <div style="display: flex; padding-top: 5px">
+                                <div class="column-0" style="padding-left: 10px; color: rgba(32, 36, 64, 0.83)">
+                                    <mat-radio-button [value]="true"></mat-radio-button>
+                                    <span style="font-family: 'Roboto Light', sans-serif">CSV</span>
+                                </div>
+                                <div class="column-1">{{conflict['csv']['number']}}</div>
+                                <div class="column-2">{{conflict['csv']['date'] | date: "dd/MM/yyyy"}}</div>
+                                <div class="column-3">{{conflict['csv']['totalAmount']}}</div>
+                                <div class="column-4">{{conflict['csv']['clientNumber']}}</div>
+                                <div class="column-5">{{conflict['csv']['state']}}</div>
+                            </div>
+
+                            <div style="display: flex; padding-bottom: 10px;">
+                                <div class="column-0" style="padding-left: 10px; color: rgba(32, 36, 64, 0.83)">
+                                    <mat-radio-button [value]="false"></mat-radio-button>
+                                    <span style="font-family: 'Roboto Light', sans-serif">Existant</span>
+                                </div>
+
+                                <div class="column-1">{{conflict['database']['number']}}</div>
+                                <div class="column-2">{{conflict['database']['date'] | date: "dd/MM/yyyy"}}</div>
+                                <div class="column-3">{{conflict['database']['totalAmount']}}</div>
+                                <div class="column-4">{{conflict['database']['clientNumber']}}</div>
+                                <div class="column-5">{{conflict['database']['state']}}</div>
+                            </div>
+                        </mat-radio-group>
+                        <mat-divider></mat-divider>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!hasConflicts&&isDatabaseToUpdate()">
+                <div style="margin-bottom: 5px; color: #41aa31">
+                    <mat-icon style="vertical-align: bottom;">done</mat-icon>
+                    <span>Ce fichier CSV est prêt pour l'importation des données.</span>
+                </div>
+
+                <div>Données du CSV : {{totalNumberOfData}}</div>
+                <div>Données identique avec la base de données actuelle : {{numberOfExactDouble}}</div>
+                <div>Nouvelles données : {{numberOfNewData}}</div>
+                <div>Données modifiées : {{numberOfUpdatedData}}</div>
+            </div>
+        </div>
+
+        <div *ngIf="!hasErrorImportingCsv&&!keepExistingDatabase&&isDatabaseToUpdate()">
+            <div>
+                <div style="margin-bottom: 5px; color: #41aa31">
+                    <mat-icon style="vertical-align: bottom;">done</mat-icon>
+                    <span>Ce fichier CSV est prêt pour l'importation des données.</span>
+                </div>
+
+                <div>Données du CSV : {{totalNumberOfData}}</div>
+                <div style="padding-top: 10px; padding-bottom: 10px; text-align: center">
+                    <mat-icon style="vertical-align: bottom; margin-right: 5px">warning</mat-icon>
+                    <span>Les données importées vont complètement écraser la base de données de devis existante !</span>
+                    <mat-icon style="vertical-align: bottom; margin-left: 5px;">warning</mat-icon>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!hasErrorImportingCsv&&!isDatabaseToUpdate()">
+            <div>
+                <div>Aucunes données à importer.</div>
+            </div>
+        </div>
+
+        <div *ngIf="hasErrorImportingCsv">
+            <div style="margin-bottom: 5px; color: #b53330">
+                <mat-icon style="vertical-align: bottom;">error</mat-icon>
+                <span style="margin-left: 10px">Ce fichier CSV comporte des erreurs. Veuillez les résoudres et réessayer.</span>
+            </div>
+            <div>Lignes avec erreurs : {{getNumberOfErrors()}}</div>
+
+            <div style="padding-top: 5px; overflow-y: auto; height: 350px; border: 1px solid lightgray">
+                <div *ngFor="let error of errorImportCsv">
+                    <div *ngIf="error['messages'].length > 0" style="display: flex">
+                        <div
+                            style="padding-left: 10px; width: 100px; min-width: 100px; color: rgba(32, 36, 64, 0.83)"><span
+                            style="font-family: 'Roboto Light', sans-serif">ligne </span>{{ error['line']}}</div>
+                        <ul style="width: 640px; min-width: 640px; font-size: 1.05em;">
+                            <li *ngFor="let errorMessage of error['messages']">{{errorMessage}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions *ngIf="!displayResultCsv" class="action-dialog">
+    <button mat-raised-button class="button-black button-disabled"
+            [disabled]="isLoadingProcessCsv || isLoadingImportData" (click)="closeDialog()">Retour
+    </button>
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingProcessCsv || isLoadingImportData"
+                 [diameter]="28"></mat-spinner>
+</mat-dialog-actions>
+
+<mat-dialog-actions
+    *ngIf="(displayResultCsv&&hasErrorImportingCsv) || (displayResultCsv&&!hasErrorImportingCsv&&!isDatabaseToUpdate())"
+    class="action-dialog">
+    <button mat-raised-button class="button-blue button-disabled"
+            (click)="tryImportingAgain()">Réessayer
+    </button>
+    <button mat-raised-button class="button-black button-disabled" (click)="closeDialog()">Annuler</button>
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingProcessCsv || isLoadingImportData"
+                 [diameter]="28"></mat-spinner>
+</mat-dialog-actions>
+
+<mat-dialog-actions *ngIf="displayResultCsv&&!hasErrorImportingCsv&&hasConflicts" class="action-dialog">
+    <button mat-raised-button class="button-blue button-disabled" (click)="checkConflictResolve()">Valider la
+        modification
+    </button>
+    <button mat-raised-button class="button-black button-disabled" (click)="closeDialog()">Annuler</button>
+
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingProcessCsv || isLoadingImportData"
+                 [diameter]="28"></mat-spinner>
+</mat-dialog-actions>
+
+<mat-dialog-actions *ngIf="displayResultCsv&&!hasErrorImportingCsv&&!hasConflicts&&isDatabaseToUpdate()"
+                    class="action-dialog">
+    <button mat-raised-button class="button-blue button-disabled"
+            [disabled]="isLoadingProcessCsv || isLoadingImportData" (click)="insertData()">Commencer l'importation des
+        données
+    </button>
+    <button mat-raised-button class="button-black button-disabled"
+            [disabled]="isLoadingProcessCsv || isLoadingImportData" (click)="closeDialog()">Annuler
+    </button>
+
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingProcessCsv || isLoadingImportData"
+                 [diameter]="28"></mat-spinner>
+</mat-dialog-actions>

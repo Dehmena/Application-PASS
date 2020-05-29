@@ -1,0 +1,116 @@
+.main-content {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 925px;
+    min-width: 800px;
+}
+
+.content {
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+.column-document-number {
+    width: 20% !important;
+}
+
+.header-document-number {
+    width: 20% !important;
+}
+
+.row-document-number {
+}
+
+
+.column-date {
+    width: 15% !important;
+
+}
+
+.header-date {
+    width: 15% !important;
+
+}
+
+.row-date {
+}
+
+.column-total-amount {
+    width: 18% !important;
+
+}
+
+.header-total-amount {
+    width: 18% !important;
+
+}
+
+.row-total-amount {
+}
+
+.column-client-number {
+    width: 18% !important;
+
+}
+
+.row-client-number {
+}
+
+.header-client-number {
+    width: 18% !important;
+
+}
+
+.column-reference-number {
+    width: 18% !important;
+}
+
+.header-reference-number {
+    width: 18% !important;
+}
+
+.row-reference-number {
+}
+
+
+
+.column-separation {
+}
+
+.header-separation {
+    width: 1% !important;
+}
+
+.column-edit {
+}
+
+.header-edit {
+    width: 0.01% !important;
+}
+
+.row-edit {
+}
+
+
+
+.input-document-number {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-date {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-total-amount {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-client-number {
+    width: 90% !important;
+    padding-top: 2px !important;
+}

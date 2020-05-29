@@ -1,0 +1,288 @@
+<div *ngIf="isLoadingFirstData" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+<div class=" main-content" [hidden]="isLoadingFirstData||!isLoadingDataSuccessful">
+    <div class="content">
+        <div style="display: flex; justify-content: space-between">
+            <div>
+                <mat-form-field style="margin-bottom: -20px !important;">
+                    <mat-label>Numéro de devis</mat-label>
+                    <input #documentNumber (keyup.enter)="findByNumber(documentNumber.value)" matInput
+                           placeholder="Ex. 1234" [(ngModel)]="searchInput">
+                </mat-form-field>
+
+                <button (click)="findByNumber(documentNumber.value)" mat-icon-button>
+                    <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button
+                        matTooltip="Supprimer les filtres"
+                        matTooltipPosition="after"
+                        matTooltipShowDelay="350"
+                        (click)=deleteFilter()>
+                    <mat-icon style="transform: scale(0.77);" svgIcon="clear_filter"></mat-icon>
+                </button>
+            </div>
+            <div style="display: flex; margin-bottom: -20px !important;">
+                <mat-spinner style="margin-right: 9px; margin-top: 20px;" *ngIf="isLoadingData"
+                             [diameter]="24"></mat-spinner>
+
+                <div style="margin-top: 12px;">
+                    <button mat-icon-button [matMenuTriggerFor]="options">
+                        <mat-icon style="color: black;">menu</mat-icon>
+                    </button>
+                    <mat-menu #options="matMenu">
+                        <button class="option-button" mat-menu-item (click)="openNewItemDialog()">
+                            <mat-icon class="icon-menu icon-options">add_box</mat-icon>
+                            <span>Ajouter un devis</span>
+                        </button>
+                        <button class="option-button" mat-menu-item (click)="openImportCsvDialog();">
+                            <mat-icon class="icon-menu icon-options">library_add</mat-icon>
+                            <span>Importer un CSV</span>
+                        </button>
+                        <button class="option-button" mat-menu-item (click)="downloadCsvFile()">
+                            <mat-icon class="icon-menu icon-options">get_app</mat-icon>
+                            <span>Télécharger au format CSV</span>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+
+        <!--#######################################################
+        #########################  TABLE  #########################
+        ########################################################-->
+        <div class="mat-elevation-z5">
+            <table style="width: 100%" mat-table [dataSource]="table">
+                <!-- quoteNumber Column -->
+                <ng-container class="column-document-number" matColumnDef="quoteNumber">
+                    <th mat-header-cell class="table-header header-document-number" *matHeaderCellDef>Numéro<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span>
+                        <button style="margin-left: -3px !important;" (click)='doRequest("",true)' mat-icon-button>
+                            <mat-icon style="margin-bottom: 2px !important;">swap_vert</mat-icon>
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let element, let indexQuote = index">
+                    <span
+                        *ngIf="!quoteToEdit[getIndex(indexQuote)]"> {{ quoteData[getIndex(indexQuote)]['quoteNumber']}} </span>
+                        <span *ngIf="quoteToEdit[getIndex(indexQuote)]" style="width: inherit">
+                    <input
+                        class="input-document-number input-edit-data"
+                        placeholder="Numéro du document..."
+                        type="number"
+                        (keypress)="onlyNumber($event)"
+                        (paste)="pasteOnlyNumber($event)"
+                        (input)="limitInput($event, 15)"
+                        step="1"
+                        [(ngModel)]="quoteUpdatedData[getIndex(indexQuote)]['quoteNumber']">
+                    </span>
+                    </td>
+                </ng-container>
+
+                <!-- quoteDate Column -->
+                <ng-container class="column-date" matColumnDef="quoteDate">
+                    <th mat-header-cell class="table-header header-date" *matHeaderCellDef>Date<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span></th>
+                    <td mat-cell class="row-date" *matCellDef="let element, let indexQuote = index">
+                    <span
+                        *ngIf="!quoteToEdit[getIndex(indexQuote)]"> {{ quoteData[getIndex(indexQuote)]['quoteDate'] | date: "dd/MM/yyyy"}} </span>
+                        <span style="position: relative" *ngIf="quoteToEdit[getIndex(indexQuote)]">
+                            <input class="input-date input-calendar input-edit-data" [matDatepicker]="picker"
+                                   (focus)="picker.open()" (click)="picker.open()"
+                                   (keypress)="preventWriting($event); picker.open()"
+                                   (paste)="preventWriting($event); picker.open()"
+                                   (dateChange)="quoteUpdatedData[getIndex(indexQuote)]['quoteDate'] = updateDate($event)"
+                                   [value]="toDate(quoteUpdatedData[getIndex(indexQuote)]['quoteDate'])">
+                            <mat-icon (click)="picker.open()" class="icon-calendar no-select">today</mat-icon>
+                            <mat-datepicker class="date-picker" #picker="matDatepicker"></mat-datepicker>
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- quoteTotalAmount Column -->
+                <ng-container class="column-total-amount" matColumnDef="quoteTotalAmount">
+                    <th mat-header-cell class="table-header header-total-amount" *matHeaderCellDef>Montant total<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span></th>
+                    <td mat-cell class="row-total-amount" *matCellDef="let element, let indexQuote = index">
+                    <span
+                        *ngIf="!quoteToEdit[getIndex(indexQuote)]"> {{ quoteData[getIndex(indexQuote)]['quoteTotalAmount'] + ' €' }} </span>
+                        <span *ngIf="quoteToEdit[getIndex(indexQuote)]" style="width: inherit">
+
+                        <input
+                            class="input-total-amount input-edit-data"
+                            placeholder="Montant total..."
+                            type="number"
+                            step="0.01"
+                            (keypress)="onlyFloat($event)"
+                            (paste)="pasteOnlyFloat($event)"
+                            (input)="limitInput($event, 15)"
+                            [(ngModel)]="quoteUpdatedData[getIndex(indexQuote)]['quoteTotalAmount']">
+                    </span>
+                    </td>
+                </ng-container>
+
+                <!-- clientNumber Column -->
+                <ng-container class="column-client-number" matColumnDef="clientNumber">
+                    <th mat-header-cell class="table-header header-client-number" *matHeaderCellDef>Numéro client<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span></th>
+                    <td mat-cell class="row-client-number" *matCellDef="let element, let indexQuote = index">
+                    <span
+                        *ngIf="!quoteToEdit[getIndex(indexQuote)]"> {{ quoteData[getIndex(indexQuote)]['clientNumber'] }} </span>
+                        <span *ngIf="quoteToEdit[getIndex(indexQuote)]" style="width: inherit">
+
+                        <input
+                            class="input-client-number input-edit-data"
+                            placeholder="Numéro du client..."
+                            type="number"
+                            (keypress)="onlyNumber($event)"
+                            (paste)="pasteOnlyNumber($event)"
+                            (input)="limitInput($event, 15)"
+                            step="1"
+                            [(ngModel)]="quoteUpdatedData[getIndex(indexQuote)]['clientNumber']">
+                    </span>
+                    </td>
+                </ng-container>
+
+
+                <!-- quoteState Column -->
+                <ng-container class="column-state" matColumnDef="quoteState">
+                    <th mat-header-cell class="table-header header-state" *matHeaderCellDef>Etat<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span>
+                        <button mat-icon-button [matMenuTriggerFor]="states">
+                            <mat-icon style="margin-bottom: 3px !important;">sort</mat-icon>
+                        </button>
+                        <mat-icon *ngIf="stateOfDoc==='waiting'" style="font-size: 18px; vertical-align: middle; margin-top: 6px !important;" >hourglass_full</mat-icon>
+                        <mat-icon *ngIf="stateOfDoc==='validated'" style="font-size: 18px; vertical-align: middle; margin-top: 6px !important;">check_circle</mat-icon>
+                        <mat-icon *ngIf="stateOfDoc==='cancelled'" style="font-size: 18px; vertical-align: middle; margin-top: 6px !important;">cancel</mat-icon>
+
+                        <mat-menu #states="matMenu">
+                            <button class="menu-button" (click)='doRequest("waiting",false)' mat-menu-item>
+                                <mat-icon style="margin-right: 8px !important;" class="icon-menu icon-waiting">hourglass_full</mat-icon>
+                                <span>En attente</span>
+                            </button>
+                            <button class="menu-button" (click)='doRequest("validated",false)' mat-menu-item>
+                                <mat-icon style="margin-right: 8px !important;" class="icon-menu icon-validated">check_circle</mat-icon>
+                                <span>Validé</span>
+                            </button>
+                            <button class="menu-button" (click)='doRequest("cancelled",false)' mat-menu-item>
+                                <mat-icon style="margin-right: 8px !important;" class="icon-menu icon-cancel">cancel</mat-icon>
+                                <span>Annulé</span>
+                            </button>
+                        </mat-menu>
+                    </th>
+                    <td mat-cell class="row-state" *matCellDef="let element, let indexQuote = index">
+
+                        <span style="margin-left: -6px;" *ngIf="!quoteToEdit[getIndex(indexQuote)]">
+                            <mat-icon *ngIf="quoteData[getIndex(indexQuote)]['quoteState'] === 'waiting'"
+                                      class="no-select" style="vertical-align: bottom; color: rgba(247,194,45,0.94)">hourglass_full</mat-icon>
+                            <mat-icon *ngIf="quoteData[getIndex(indexQuote)]['quoteState'] === 'validated'"
+                                      class="no-select" style="vertical-align: bottom; color: rgba(83,185,74,0.97)">check_circle</mat-icon>
+                            <mat-icon *ngIf="quoteData[getIndex(indexQuote)]['quoteState'] === 'cancelled'"
+                                      class="no-select" style="vertical-align: bottom; color: rgba(232,65,57,0.89);">cancel</mat-icon>
+                            <span style="padding-left: 6px;">{{ quoteStates[quoteData[getIndex(indexQuote)]['quoteState']] }}</span>
+                        </span>
+                        <span *ngIf="quoteToEdit[getIndex(indexQuote)]">
+                        <div [matMenuTriggerFor]="states" class="input-state input-edit-data">
+                            <span
+                                style="padding-top: 2px !important;">{{ quoteStates[quoteUpdatedData[getIndex(indexQuote)]['quoteState']] }}</span>
+                            <mat-icon class="no-select" style="vertical-align: bottom">arrow_drop_down</mat-icon>
+                        </div>
+
+                        <mat-menu #states="matMenu">
+                            <button class="menu-button" (click)='changeState("waiting", getIndex(indexQuote))'
+                                    mat-menu-item>
+                                <mat-icon style="margin-right: 8px !important;" class="icon-menu icon-waiting">hourglass_full</mat-icon>
+                                <span>En attente</span>
+                            </button>
+                            <button class="menu-button" (click)='changeState("validated", getIndex(indexQuote))'
+                                    mat-menu-item>
+                                <mat-icon style="margin-right: 8px !important;" class="icon-menu icon-validated">check_circle</mat-icon>
+                                <span>Validé</span>
+                            </button>
+                            <button class="menu-button" (click)='changeState("cancelled", getIndex(indexQuote))'
+                                    mat-menu-item>
+                                <mat-icon style="margin-right: 8px !important;" class="icon-menu icon-cancel">cancel</mat-icon>
+                                <span>Annulé</span>
+                            </button>
+                        </mat-menu>
+                    </span>
+                    </td>
+                </ng-container>
+
+                <ng-container class="column-separation" matColumnDef="separation">
+                    <th mat-header-cell class="table-header header-separation" *matHeaderCellDef></th>
+                    <td mat-cell class="row-client-number header-separation"
+                        *matCellDef="let element, let indexQuote = index">
+                    </td>
+                </ng-container>
+
+                <!-- update Column -->
+                <ng-container class="column-edit" matColumnDef="button1">
+                    <th mat-header-cell class="table-header header-edit" *matHeaderCellDef>
+                    </th>
+                    <td mat-cell class="row-edit" *matCellDef="let element, let indexQuote = index">
+                        <div *ngIf="!quoteToEdit[getIndex(indexQuote)]">
+                            <button mat-icon-button
+                                    matTooltip="Modifier"
+                                    matTooltipPosition="left"
+                                    matTooltipShowDelay="350"
+                                    id="updateButton" (click)="toggleEditMode(getIndex(indexQuote))">
+                                <mat-icon class="icon-edit-color">edit</mat-icon>
+                            </button>
+                        </div>
+
+                        <div *ngIf="quoteToEdit[getIndex(indexQuote)]">
+                            <button mat-icon-button
+                                    matTooltip="Valider"
+                                    matTooltipPosition="left"
+                                    matTooltipShowDelay="350"
+                                    id="validateUpdateButton"
+                                    [disabled]="isLoadingData"
+                                    (click)="validation(getIndex(indexQuote))">
+                                <mat-icon class="icon-edit-color">done</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container class="column-edit" matColumnDef="button2">
+                    <th mat-header-cell class="table-header header-edit" *matHeaderCellDef>
+
+                    </th>
+                    <td mat-cell class="row-edit" style="padding: 0 !important;"
+                        *matCellDef="let element, let indexQuote = index">
+                        <div *ngIf="!quoteToEdit[getIndex(indexQuote)]">
+                            <button mat-icon-button
+                                    matTooltip="Supprimer"
+                                    matTooltipPosition="right"
+                                    matTooltipShowDelay="350"
+                                    (click)="openDeleteDialog(quoteData[getIndex(indexQuote)])">
+                                <mat-icon class="icon-edit-color">delete</mat-icon>
+                            </button>
+                        </div>
+
+                        <div *ngIf="quoteToEdit[getIndex(indexQuote)]">
+                            <button mat-icon-button
+                                    matTooltip="Annuler"
+                                    matTooltipPosition="right"
+                                    matTooltipShowDelay="350"
+                                    [disabled]="isLoadingData"
+                                    id="cancelUpdateButton" (click)="toggleEditMode(getIndex(indexQuote))">
+                                <mat-icon class="icon-edit-color">undo</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            </table>
+
+            <mat-paginator class="table-pagination"
+                           [pageSizeOptions]="[5, 10, 15, 20]"
+                           [pageSize]="10"
+                           [showFirstLastButtons]=false
+                           (page)="doRequestIfLastPage($event)">
+            </mat-paginator>
+        </div>
+        <div style="text-align: right" [style.visibility]="editMode()? 'visible': 'hidden'">
+            <span class="required-field" style="font-family: 'Roboto Light', 'sans-serif'; font-size: 0.72em;">*champs requis</span>
+        </div>
+    </div>
+</div>

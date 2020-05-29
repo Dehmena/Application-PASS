@@ -1,0 +1,15 @@
+<div class="title-dialog" mat-dialog-title>
+    <span>Suppression d'une donnée</span>
+    <mat-icon class="no-select" style="margin-top: 4px !important;">delete</mat-icon>
+</div>
+
+<mat-dialog-content class="content-dialog">
+    <div>Voulez-vous supprimer définitivement cette donnée ?</div>
+    <div style="padding-top: 1px; font-family: 'Roboto Medium', sans-serif">{{dataName}} {{data['number']}}</div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="action-dialog">
+    <button mat-raised-button class="button-red button-disabled" [disabled]="isLoadingDeleteData" (click)="deleteData()">Supprimer</button>
+    <button mat-raised-button class="button-black button-disabled" [disabled]="isLoadingDeleteData" (click)="closeDialog()">Annuler</button>
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingDeleteData" [diameter]="28"></mat-spinner>
+</mat-dialog-actions>

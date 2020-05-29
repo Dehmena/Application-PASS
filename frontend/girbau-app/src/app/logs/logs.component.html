@@ -1,0 +1,55 @@
+<div style="margin-top:12px;">
+    <span class="title-text">Logs</span>
+    <div class="title-divider"></div>
+</div>
+
+<div *ngIf="isGetLogsLoading" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+
+<div class="main-content">
+    <div [hidden]="isGetLogsLoading||!isGetLogsSuccess" class="mat-elevation-z5 content">
+
+        <table mat-table [dataSource]="table" matSort matSortActive="dateLog" matSortDirection="desc">
+
+            <ng-container matColumnDef="typeLog">
+                <th mat-header-cell class="table-header header-type" *matHeaderCellDef></th>
+                <td mat-cell class="row-type" *matCellDef="let element">
+                    <mat-icon *ngIf="!element.error" class="no-select">{{toIcon(element['typeLog'])}}</mat-icon>
+                    <mat-icon *ngIf="element.error" class="error-color no-select">{{toIcon(element['typeLog'])}}</mat-icon>
+                </td>
+            </ng-container>
+
+            <!-- Message Column -->
+            <ng-container matColumnDef="message">
+                <th mat-header-cell class="table-header header-message" *matHeaderCellDef>Message</th>
+                <td mat-cell class="row-message" *matCellDef="let element">
+                    <span *ngIf="!element.error">{{element.message}}</span>
+                    <span *ngIf="element.error" class="error-color">{{element.message}}</span>
+                </td>
+            </ng-container>
+
+
+            <!-- Date Column -->
+            <ng-container matColumnDef="dateLog">
+                <th mat-header-cell class="table-header header-date" *matHeaderCellDef mat-sort-header>Date</th>
+                <td mat-cell class="row-date" *matCellDef="let element">
+                    <span *ngIf="!element.error">{{element["dateLog"] | date: 'dd/MM/yyyy HH:mm:ss':'GMT'}}</span>
+                    <span *ngIf="element.error"
+                          class="error-color">{{element["dateLog"] | date: 'dd/MM/yyyy HH:mm:ss':'GMT'}}</span>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row class="table-cell-content" *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        </table>
+
+        <mat-paginator class="table-pagination"
+                       [pageSizeOptions]="[5, 10, 20, 50]"
+                       [pageSize]="10"
+                       showFirstLastButtons></mat-paginator>
+
+    </div>
+</div>

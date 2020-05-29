@@ -1,0 +1,168 @@
+<mat-sidenav-container class="main-sidenav-container">
+    <mat-sidenav class="main-sidenav" opened mode="side">
+        <div class="no-scrollbar">
+            <div class="logo-container">
+                <mat-icon svgIcon="logo_PASS" class="logo"></mat-icon>
+                <div class="application-name">Platform After Sales Service</div>
+            </div>
+            <div class="logo-small-container">
+                <mat-icon svgIcon="logo_PASS" class="logo-small"></mat-icon>
+            </div>
+
+            <div id="sidenav-content" class="sidenav-scrollbar">
+                <mat-nav-list class="sidenav-list">
+                    <a class="link" mat-list-item routerLink="/pdf-processing" routerLinkActive="link-active">
+                        <div class="link-content">
+                            <mat-icon class="icon-sidenav no-select">picture_as_pdf</mat-icon>
+                            <span class="link-name">Traitement PDF</span>
+                        </div>
+                    </a>
+                    <a (click)="toggleDatabaseTab()" class="link no-select position-relative" mat-list-item>
+                        <div class="link-content">
+                            <mat-icon class="icon-sidenav">storage</mat-icon>
+                            <span class="link-name">Base de données</span>
+                            <mat-icon [@rotatedState]='stateDatabaseTab' class="icon-expand-panel">
+                                keyboard_arrow_down
+                            </mat-icon>
+                        </div>
+                    </a>
+
+                    <div [hidden]="!isDatabaseTabOpen">
+                        <a class="sub-link" mat-list-item routerLink="/database/client" routerLinkActive="link-active"
+                           #rla="routerLinkActive">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="database_client" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Clients</span>
+                            </div>
+                        </a>
+                        <a class="sub-link" mat-list-item routerLink="/database/quote" routerLinkActive="link-active">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="database_quote" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Devis</span>
+                            </div>
+                        </a>
+                        <a class="sub-link" mat-list-item routerLink="/database/order" routerLinkActive="link-active">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="database_order" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Commandes</span>
+                            </div>
+                        </a>
+                        <a class="sub-link" mat-list-item routerLink="/database/invoice" routerLinkActive="link-active">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="database_invoice" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Factures</span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <a class="link" mat-list-item routerLink="/logs" routerLinkActive="link-active">
+                        <div class="link-content">
+                            <mat-icon class="icon-sidenav no-select">history</mat-icon>
+                            <span class="link-name">Logs système</span>
+                        </div>
+                    </a>
+
+                    <a (click)="toggleSettingsTab()" class="link no-select position-relative" mat-list-item>
+                        <div class="link-content">
+                            <mat-icon class="icon-sidenav">settings</mat-icon>
+                            <span class="link-name">Paramètres</span>
+                            <mat-icon [@rotatedState]='stateSettingsTab' class="icon-expand-panel">
+                                keyboard_arrow_down
+                            </mat-icon>
+                        </div>
+                    </a>
+
+                    <div [hidden]="!isSettingsTabOpen">
+                        <a class="sub-link" mat-list-item routerLink="/settings/mail-sending"
+                           routerLinkActive="link-active"
+                           #rla="routerLinkActive">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="settings_mail" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Envoi d'e-mail</span>
+                            </div>
+                        </a>
+                        <a class="sub-link" mat-list-item routerLink="/settings/pdf-processing"
+                           routerLinkActive="link-active">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="settings_pdf_processing" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Traitement PDF</span>
+                            </div>
+                        </a>
+                        <a class="sub-link" mat-list-item routerLink="/settings/other" routerLinkActive="link-active">
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="settings_other" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Divers</span>
+                            </div>
+                        </a>
+
+                        <a (click)="toggleMailTemplateTab()" class="sub-link no-select position-relative" mat-list-item>
+                            <div class="sub-link-content">
+                                <mat-icon svgIcon="settings_mail_template" class="icon-sidenav"></mat-icon>
+                                <span class="link-name">Modèle d'e-mail</span>
+                            </div>
+                            <mat-icon [@rotatedState]='stateMailTemplateTab' class="icon-expand-panel">
+                                keyboard_arrow_down
+                            </mat-icon>
+                        </a>
+
+                        <div [hidden]="!isMailTemplateTabOpen">
+                            <a class="sub-sub-link" mat-list-item routerLink="/settings/mail-template-quote"
+                               routerLinkActive="link-active">
+                                <div class="sub-sub-link-content">
+                                    <mat-icon svgIcon="mail_quote" class="icon-sidenav"></mat-icon>
+                                    <span class="link-name">Devis</span>
+                                </div>
+                            </a>
+
+                            <a class="sub-sub-link" mat-list-item routerLink="/settings/mail-template-order"
+                               routerLinkActive="link-active">
+                                <div class="sub-sub-link-content">
+                                    <mat-icon svgIcon="mail_order" class="icon-sidenav"></mat-icon>
+                                    <span class="link-name">Commandes</span>
+                                </div>
+                            </a>
+
+                            <a class="sub-sub-link" mat-list-item routerLink="/settings/mail-template-invoice"
+                               routerLinkActive="link-active">
+                                <div class="sub-sub-link-content">
+                                    <mat-icon svgIcon="mail_invoice" class="icon-sidenav"></mat-icon>
+                                    <span class="link-name">Factures</span>
+                                </div>
+                            </a>
+
+                            <a class="sub-sub-link" mat-list-item routerLink="/settings/mail-template-first-reminder"
+                               routerLinkActive="link-active">
+                                <div class="sub-sub-link-content">
+                                    <mat-icon svgIcon="mail_first_reminder" class="icon-sidenav no-select"></mat-icon>
+                                    <span class="link-name">Première relance</span>
+                                </div>
+                            </a>
+
+                            <a class="sub-sub-link" mat-list-item routerLink="/settings/mail-template-second-reminder"
+                               routerLinkActive="link-active">
+                                <div class="sub-sub-link-content">
+                                    <mat-icon svgIcon="mail_second_reminder" class="icon-sidenav no-select"></mat-icon>
+                                    <span class="link-name">Deuxième relance</span>
+                                </div>
+                            </a>
+
+                            <a class="sub-sub-link" mat-list-item routerLink="/settings/mail-signature-template"
+                               routerLinkActive="link-active">
+                                <div class="sub-sub-link-content">
+                                    <mat-icon svgIcon="mail_signature" class="icon-sidenav"></mat-icon>
+                                    <span class="link-name">Signature</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                </mat-nav-list>
+            </div>
+        </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+

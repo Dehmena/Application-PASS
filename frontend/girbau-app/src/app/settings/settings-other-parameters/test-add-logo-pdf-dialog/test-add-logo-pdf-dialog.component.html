@@ -1,0 +1,35 @@
+<div class="title-dialog" mat-dialog-title>
+    <span>Test d'ajout de logo dans les documents</span>
+    <mat-icon class="no-select" style="margin-top: 4px !important;">settings</mat-icon>
+</div>
+
+<mat-dialog-content class="content-dialog">
+    <ngx-file-drop accept=".pdf" (onFileDrop)="testAddLogo($event)" dropZoneClassName="drop-file-component">
+        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            <div class="drop-zone" (click)="openFileSelector()">
+                <div class="drop-content">
+                    <mat-icon class="icon-upload-file no-select" inline=true>open_in_browser</mat-icon>
+                    <span class="drop-content-text">Cliquez ici pour charger un Devis, une Commande ou une Facture au format PDF ou déposez le directement</span>
+                </div>
+            </div>
+        </ng-template>
+    </ngx-file-drop>
+
+    <div *ngIf="!isTestLoading&&isTestSuccessful" style="border: 1px solid lightgray; height: 300px; margin-top: 10px; margin-bottom: 20px">
+        <pdf-viewer [class.mat-elevation-z5]="true"
+                    [src]="pdfDisplaySource"
+                    [render-text]="true"
+                    [original-size]="false"
+                    [show-all]="true"
+                    >
+        </pdf-viewer>
+    </div>
+</mat-dialog-content>
+
+
+<mat-dialog-actions class="action-dialog">
+    <button mat-raised-button class="button-black button-disabled" style="width: 100px" [disabled]="isTestLoading"
+            (click)="closeDialog()">Retour
+    </button>
+    <mat-spinner style="margin-left: 10px;" *ngIf="isTestLoading" [diameter]="28"></mat-spinner>
+</mat-dialog-actions>

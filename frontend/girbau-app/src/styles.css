@@ -1,0 +1,254 @@
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+:root{
+    --sidenav-color: #2b2e4a;
+    --sidenav-color-lighter: rgb(55, 59, 89);
+    --sidenav-color-lightest: rgb(62, 66, 99);
+    --sidenav-color-accent: #192139;
+    --primary: #474c7a;
+    --primary-accent: rgba(71, 76, 122, 0.81);
+    --secondary: #e84545;
+    --secondary-accent: rgba(232, 69, 69, 0.8);
+    --background:  #FAFAFA;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url(assets/font/Roboto-Regular.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto Light";
+    src: url(assets/font/Roboto-Light.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto Medium";
+    src: url(assets/font/Roboto-Medium.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto Black";
+    src: url(assets/font/Roboto-Black.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto Thin";
+    src: url(assets/font/Roboto-Thin.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto Bold";
+    src: url(assets/font/Roboto-Bold.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto Light Italic";
+    src: url(assets/font/Roboto-LightItalic.ttf) format("truetype");
+}
+
+html, body { height: 100%; }
+body {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #FAFAFA;
+}
+
+.drop-file-component {
+    height: 100px;
+    border: 2px dashed #F47A60;
+    border-radius: 5px;
+    background-color: #FFFAF8;
+}
+
+.ngx-file-drop__drop-zone--over{
+    background-color: #FFEDE6 !important;
+}
+
+.drop-file-component:hover{
+    background-color: #FFF3EE !important;
+    cursor: pointer;
+}
+
+.drop-file-component:active{
+    background-color: #FFEDE6 !important;
+}
+
+.snackbar-error{
+    color: rgb(255, 72, 75) !important;
+    white-space: pre-wrap !important;
+}
+
+.snackbar-error .mat-simple-snackbar-action{
+    color: white !important;
+}
+
+.error-color{
+    color: var(--secondary);
+}
+
+.success-color{
+    color: darkgreen;
+}
+
+.mat-progress-spinner circle, .mat-spinner circle{
+    stroke: var(--primary);
+}
+
+
+button:focus{
+    outline: none;
+}
+
+.no-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+
+input:focus {
+    outline: 1px solid var(--secondary-accent);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+.mat-spinner-loading-page{
+    margin-top: 10%;
+    text-align: center;
+}
+
+/**********************************
+**********  TABLE STYLE  **********
+**********************************/
+
+.table-header{
+    background-color: var(--primary);
+    color: white;
+    font-size: 0.95em;
+}
+
+.mat-sort-header-arrow{
+    color: white;
+}
+
+.table-pagination{
+    background: var(--primary);
+    color: white;
+}
+
+.table-pagination .mat-select-value{
+    color: white;
+}
+
+.table-pagination .mat-select-arrow{
+    color: white;
+}
+
+.table-pagination .mat-form-field.mat-focused.mat-primary .mat-select-arrow{
+    color: white;
+}
+
+.table-pagination .mat-form-field-underline{
+    background-color: white;
+}
+
+.table-pagination .mat-form-field-ripple {
+    background-color: transparent !important;
+}
+
+td.mat-cell{
+    border-bottom: none !important;
+}
+
+th.mat-header-cell{
+    border-bottom: none !important;
+}
+
+.mat-row:nth-child(even){
+    background-color: rgba(47, 58, 255, 0.04);
+}
+
+.mat-row:nth-child(odd){
+    background-color: rgba(47, 58, 255, 0.1);
+}
+
+
+
+
+/***********************************
+********  MAT DIALOG STYLE  ********
+***********************************/
+
+.no-padding-dialog .mat-dialog-container{
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-y: hidden;
+}
+
+.min-width-dialog-443 .mat-dialog-container{
+    min-width: 443px !important;
+}
+
+.min-width-dialog-450 .mat-dialog-container{
+    min-width: 450px !important;
+}
+
+.min-width-dialog-500 .mat-dialog-container{
+    min-width: 500px !important;
+}
+
+.min-width-dialog-700 .mat-dialog-container{
+    min-width: 700px !important;
+}
+
+.min-width-dialog-800 .mat-dialog-container{
+    min-width: 800px !important;
+}
+
+/*********************************
+*********  BUTTON STYLE  *********
+*********************************/
+
+.button-blue {
+    border: 1px solid #6985e6 !important;
+    color: rgba(79, 89, 230, 0.98) !important;
+    box-shadow: 1px 1px 2px rgba(0.0, 0.0, 0.0, 0.7) !important;
+    font-family: "Roboto Medium", "sans-serif";
+}
+
+.button-black{
+    border: 1px solid rgb(142, 142, 145) !important;
+    color: rgba(53, 53, 55, 0.98) !important;
+    box-shadow: 1px 1px 2px rgba(0.0, 0.0, 0.0, 0.7) !important;
+    font-family: "Roboto Medium", "sans-serif";
+}
+
+.button-red{
+    border: 1px solid rgba(243, 85, 79, 0.75) !important;
+    color: rgba(210, 77, 74, 0.84) !important;
+    box-shadow: 1px 1px 2px rgba(0.0, 0.0, 0.0, 0.7) !important;
+    font-family: "Roboto Medium", "sans-serif" !important;
+}
+
+.button-blue:disabled {
+    border: 1px solid #a6a8a6;
+}
+
+.button-black:disabled{
+    border: 1px solid #a6a8a6;
+}
+
+.button-red:disabled{
+    border: 1px solid #a6a8a6;
+}

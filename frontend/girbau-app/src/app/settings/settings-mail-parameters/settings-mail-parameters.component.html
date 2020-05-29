@@ -1,0 +1,122 @@
+<div *ngIf="isGetParametersLoading" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+<div [hidden]="isGetParametersLoading||!isGetParametersSuccessful" class="main-content">
+    <mat-card style="padding-top: 0" class="settings-content mat-elevation-z5">
+
+        <mat-card-content style="margin: 0; padding: 0">
+            <div class="category">
+                <div class="category-title width-title">
+                    <span>Adresse e-mail d'envoi</span>
+                    <mat-icon [hidden]="!isEditingMailParameters"
+                              class="icon-help"
+                              (click)="toggleTooltipLogin()"
+                              #tooltipLogin="matTooltip"
+                              [matTooltip]="tooltipLoginMail"
+                              [matTooltipClass]="'tooltip-config'"
+                              matTooltipPosition="right"
+                              (mouseenter)="$event.stopImmediatePropagation()"
+                              (mouseleave)="$event.stopImmediatePropagation()">
+                        <span *ngIf="!isTooltipLoginVisible()">help_outline</span>
+                        <span *ngIf="isTooltipLoginVisible()">help</span>
+                    </mat-icon>
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingMailParameters" class="category-content">
+                        {{dashIfEmpty(mailParameters["sender_address"])}}
+                    </div>
+                    <div *ngIf="isEditingMailParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Adresse e-mail..."
+                               class="width-input" [(ngModel)]="mailParametersUpdated['sender_address']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Mot de passe de l'adresse d'envoi</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingMailParameters" class="category-content">
+                        {{hidePassword(mailParameters['sender_password'])}}
+                    </div>
+                    <div *ngIf="isEditingMailParameters" class="category-input">
+                        <input type="password"
+                               placeholder="Mot de passe..."
+                               class="width-input" [(ngModel)]="mailParametersUpdated['sender_password']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">
+                    <span>Serveur SMTP</span>
+                    <mat-icon [hidden]="!isEditingMailParameters"
+                              class="icon-help"
+                              (click)="toggleTooltipSMTP()"
+                              #tooltipSMTP="matTooltip"
+                              [matTooltip]="tooltipServerSMTP"
+                              matTooltipClass="tooltip-config"
+                              matTooltipPosition="right"
+                              (mouseenter)="$event.stopImmediatePropagation()"
+                              (mouseleave)="$event.stopImmediatePropagation()">
+                        <span *ngIf="!isTooltipSMTPVisible()">help_outline</span>
+                        <span *ngIf="isTooltipSMTPVisible()">help</span>
+                    </mat-icon>
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingMailParameters" class="category-content">
+                        {{dashIfEmpty(mailParameters['smtp_server'])}}
+                    </div>
+                    <div *ngIf="isEditingMailParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Serveur SMTP..."
+                               class="width-input" [(ngModel)]="mailParametersUpdated['smtp_server']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Port SMTP</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingMailParameters" class="category-content">
+                        {{dashIfEmpty(mailParameters['smtp_port'])}}
+                    </div>
+                    <div *ngIf="isEditingMailParameters" class="category-input">
+                        <input class="width-input"
+                               placeholder="Port SMTP..."
+                               type="number"
+                               (keypress)="onlyNumber($event)"
+                               (paste)="pasteOnlyNumber($event)"
+                               (input)="limitInput($event, 15)"
+                               step="1"
+                               [(ngModel)]="mailParametersUpdated['smtp_port']">
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-actions *ngIf="!isEditingMailParameters" style="margin-top: 10px; display: flex; justify-content: space-between" align="start">
+            <button mat-raised-button class="button-black" (click)=toggleEditModeMailParameters()>Modifier les paramètres
+            </button>
+
+            <button mat-raised-button class="button-black" (click)=openDialogTestMailParameters()>Tester les paramètres</button>
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="isEditingMailParameters" align="start" style="margin-top: 10px; align-items: center; display: flex">
+            <button mat-raised-button class="button-blue button-disabled" [disabled]="isUpdateMailParametersLoading" style="width: 100px" (click)=updateMailParameters()>Valider</button>
+            <button mat-raised-button class="button-black button-disabled" [disabled]="isUpdateMailParametersLoading" style="width: 100px" (click)=toggleEditModeMailParameters()>Annuler</button>
+            <mat-spinner style="margin-left: 8px" [diameter]="30" *ngIf="isUpdateMailParametersLoading"></mat-spinner>
+        </mat-card-actions>
+    </mat-card>
+</div>

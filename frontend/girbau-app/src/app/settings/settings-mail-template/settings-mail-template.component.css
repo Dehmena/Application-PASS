@@ -1,0 +1,24 @@
+.category-mail-template{
+    padding-top: 10px;
+    padding-bottom: 8px;
+    max-width: max-content;
+    display: flex;
+}
+
+.width-title{
+    width: 60px;
+    min-width: 60px;
+}
+
+.width-content{
+    width: 775px;
+    max-width: 775px;
+}
+
+.width-input{
+    width: 100%;
+}
+
+.category-input{
+    font-size: 0.85em;
+}

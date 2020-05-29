@@ -1,0 +1,66 @@
+.title-dialog {
+    display: flex;
+    justify-content: space-between;
+    background: var(--primary);
+    color: white;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 1.15em;
+    margin: 0;
+}
+
+.content-dialog {
+    font-family: Roboto, sans-serif;
+    font-size: 1.10em;
+    margin-top: 8px;
+    margin-left: -9px;
+    width: 443px;
+    padding-right: 0;
+}
+
+.action-dialog{
+    margin-left: 15px;
+    margin-top: 0;
+}
+
+.data-category-title {
+    font-family: Roboto, "Helvetica Neue", "sans-serif";
+    font-size: 0.80em;
+    color: rgba(32, 36, 64, 0.83);
+}
+
+.data-category-edit {
+    padding-top: 5px;
+    height: 60px;
+}
+
+.data-category-input {
+    width: 100% !important;
+    border: 1px solid rgb(203, 203, 203);
+    border-radius: 1px;
+    font-size: 0.90em;
+    padding-left: 5px;
+    height: 28px;
+}
+
+.icon-calendar {
+    position: absolute;
+    right: 3px;
+    padding-top: 3px;
+    color: #888888;
+    cursor: pointer;
+}
+
+.input-calendar{
+    cursor: pointer;
+}
+
+.input-calendar:focus + .icon-calendar {
+    color: var(--secondary-accent);
+}
+
+.required-field {
+    color: var(--secondary);
+}

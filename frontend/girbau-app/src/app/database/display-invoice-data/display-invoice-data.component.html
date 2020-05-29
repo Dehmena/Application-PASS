@@ -1,0 +1,221 @@
+<div *ngIf="isLoadingFirstData" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+<div class=" main-content" [hidden]="isLoadingFirstData||!isLoadingDataSuccessful">
+    <div class="content">
+        <div style="display: flex; justify-content: space-between">
+            <div>
+                <mat-form-field style="margin-bottom: -20px !important;">
+                    <mat-label>Numéro de facture</mat-label>
+                    <input #documentNumber (keyup.enter)="findByNumber(documentNumber.value)" matInput
+                           placeholder="Ex. 1234" [(ngModel)]="searchInput">
+                </mat-form-field>
+
+                <button (click)="findByNumber(documentNumber.value)" mat-icon-button>
+                    <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button
+                        matTooltip="Supprimer les filtres"
+                        matTooltipPosition="after"
+                        matTooltipShowDelay="350"
+                        (click)=deleteFilter()>
+                    <mat-icon style="transform: scale(0.77);" svgIcon="clear_filter"></mat-icon>
+                </button>
+            </div>
+            <div style="display: flex; margin-bottom: -20px !important;">
+                <mat-spinner style="margin-right: 9px; margin-top: 20px;" *ngIf="isLoadingData"
+                             [diameter]="24"></mat-spinner>
+
+                <div style="margin-top: 12px;">
+                    <button mat-icon-button [matMenuTriggerFor]="options">
+                        <mat-icon style="color: black;">menu</mat-icon>
+                    </button>
+                    <mat-menu #options="matMenu">
+                        <button class="option-button" mat-menu-item (click)="openNewItemDialog()">
+                            <mat-icon class="icon-menu icon-options">add_box</mat-icon>
+                            <span>Ajouter une facture</span>
+                        </button>
+                        <button class="option-button" mat-menu-item (click)="openImportCsvDialog()">
+                            <mat-icon class="icon-menu icon-options">library_add</mat-icon>
+                            <span>Importer un CSV</span>
+                        </button>
+                        <button class="option-button" mat-menu-item (click)="downloadCsvFile()">
+                            <mat-icon class="icon-menu icon-options">get_app</mat-icon>
+                            <span>Télécharger au format CSV</span>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+
+        <!--#######################################################
+        #########################  TABLE  #########################
+        ########################################################-->
+
+        <div class="mat-elevation-z5">
+            <table style="width: 100%" mat-table [dataSource]="table">
+
+                <!-- invoiceNumber Column -->
+                <ng-container class="column-document-number" matColumnDef="invoiceNumber">
+                    <th mat-header-cell class="table-header header-document-number" *matHeaderCellDef>Numéro<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span>
+                        <button style="margin-left: -3px !important;" (click)='doRequest()' mat-icon-button>
+                            <mat-icon style="margin-bottom: 2px !important;">swap_vert</mat-icon>
+                        </button>
+                    </th>
+                    <td mat-cell *matCellDef="let element, let indexInvoice = index">
+                    <span
+                        *ngIf="!invoiceToEdit[getIndex(indexInvoice)]"> {{ invoiceData[getIndex(indexInvoice)]['invoiceNumber']}} </span>
+                        <span *ngIf="invoiceToEdit[getIndex(indexInvoice)]" style="width: inherit">
+                    <input
+                        class="input-document-number input-edit-data"
+                        placeholder="Numéro du document..."
+                        type="number"
+                        (keypress)="onlyNumber($event)"
+                        (paste)="pasteOnlyNumber($event)"
+                        (input)="limitInput($event, 15)"
+                        step="1"
+                        [(ngModel)]="invoiceUpdatedData[getIndex(indexInvoice)]['invoiceNumber']">
+                    </span>
+                    </td>
+                </ng-container>
+
+                <!-- invoiceDate Column -->
+                <ng-container class="column-date" matColumnDef="invoiceDate">
+                    <th mat-header-cell class="table-header header-date" *matHeaderCellDef>Date<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span></th>
+                    <td mat-cell class="row-date" *matCellDef="let element, let indexInvoice = index">
+                    <span
+                        *ngIf="!invoiceToEdit[getIndex(indexInvoice)]"> {{ invoiceData[getIndex(indexInvoice)]['invoiceDate'] | date: "dd/MM/yyyy"}} </span>
+                        <span style="position: relative" *ngIf="invoiceToEdit[getIndex(indexInvoice)]">
+                            <input class="input-date input-calendar input-edit-data" [matDatepicker]="picker"
+                                   (keypress)="preventWriting($event); picker.open()"
+                                   (paste)="preventWriting($event); picker.open()"
+                                   (focus)="picker.open()" (click)="picker.open()"
+                                   (dateChange)="invoiceUpdatedData[getIndex(indexInvoice)]['invoiceDate'] = updateDate($event)"
+                                   [value]="toDate(invoiceUpdatedData[getIndex(indexInvoice)]['invoiceDate'])">
+                            <mat-icon (click)="picker.open()" class="icon-calendar no-select">today</mat-icon>
+                            <mat-datepicker class="date-picker" #picker="matDatepicker"></mat-datepicker>
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- clientNumber Column -->
+                <ng-container class="column-client-number" matColumnDef="clientNumber">
+                    <th mat-header-cell class="table-header header-client-number" *matHeaderCellDef>Numéro client<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span></th>
+                    <td mat-cell class="row-client-number" *matCellDef="let element, let indexInvoice = index">
+                    <span
+                        *ngIf="!invoiceToEdit[getIndex(indexInvoice)]"> {{ invoiceData[getIndex(indexInvoice)]['clientNumber'] }} </span>
+                        <span *ngIf="invoiceToEdit[getIndex(indexInvoice)]" style="width: inherit">
+
+                        <input
+                            class="input-client-number input-edit-data"
+                            placeholder="Numéro du client..."
+                            type="number"
+                            (keypress)="onlyNumber($event)"
+                            (paste)="pasteOnlyNumber($event)"
+                            (input)="limitInput($event, 15)"
+                            step="1"
+                            [(ngModel)]="invoiceUpdatedData[getIndex(indexInvoice)]['clientNumber']">
+                    </span>
+                    </td>
+                </ng-container>
+
+                <!-- orderNumber Column -->
+                <ng-container class="column-reference-number" matColumnDef="orderNumber">
+                    <th mat-header-cell class="table-header header-reference-number" *matHeaderCellDef>Référence commande<span class="required-field" [style.visibility]="editMode()? 'visible': 'hidden'">*</span></th>
+                    <td mat-cell class="row-reference-number" *matCellDef="let element, let indexInvoice = index">
+                        <span *ngIf="!invoiceToEdit[getIndex(indexInvoice)]">
+                            {{ invoiceData[getIndex(indexInvoice)]['orderNumber'] }}
+                        </span>
+
+                        <span *ngIf="invoiceToEdit[getIndex(indexInvoice)]" style="width: inherit">
+                            <input
+                                class="input-document-number input-edit-data"
+                                placeholder="Référence de commande..."
+                                type="number"
+                                (keypress)="onlyNumber($event)"
+                                (paste)="pasteOnlyNumber($event)"
+                                (input)="limitInput($event, 15)"
+                                step="1"
+                                [(ngModel)]="invoiceUpdatedData[getIndex(indexInvoice)]['orderNumber']">
+                        </span>
+                    </td>
+                </ng-container>
+
+                <ng-container class="column-separation" matColumnDef="separation">
+                    <th mat-header-cell class="table-header header-separation" *matHeaderCellDef></th>
+                    <td mat-cell class="row-client-number header-separation"
+                        *matCellDef="let element, let indexInvoice = index">
+                    </td>
+                </ng-container>
+
+                <!-- update Column -->
+                <ng-container class="column-edit" matColumnDef="button1">
+                    <th mat-header-cell class="table-header header-edit" *matHeaderCellDef></th>
+                    <td mat-cell class="row-edit" *matCellDef="let element, let indexInvoice = index">
+                        <div *ngIf="!invoiceToEdit[getIndex(indexInvoice)]">
+                            <button mat-icon-button
+                                    matTooltip="Modifier"
+                                    matTooltipPosition="left"
+                                    matTooltipShowDelay="350"
+                                    (click)="toggleEditMode(getIndex(indexInvoice))">
+                                <mat-icon class="icon-edit-color">edit</mat-icon>
+                            </button>
+                        </div>
+
+                        <div *ngIf="invoiceToEdit[getIndex(indexInvoice)]">
+                            <button mat-icon-button
+                                    matTooltip="Valider"
+                                    matTooltipPosition="left"
+                                    matTooltipShowDelay="350"
+                                    [disabled]="isLoadingData"
+                                    (click)="validation(getIndex(indexInvoice))">
+                                <mat-icon class="icon-edit-color">done</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container class="column-edit" matColumnDef="button2">
+                    <th mat-header-cell class="table-header header-edit" *matHeaderCellDef></th>
+                    <td mat-cell class="row-edit" style="padding: 0 !important;"
+                        *matCellDef="let element, let indexInvoice = index">
+                        <div *ngIf="!invoiceToEdit[getIndex(indexInvoice)]">
+                            <button mat-icon-button
+                                    matTooltip="Supprimer"
+                                    matTooltipPosition="right"
+                                    matTooltipShowDelay="350"
+                                    (click)="openDeleteDialog(invoiceData[getIndex(indexInvoice)])">
+                                <mat-icon class="icon-edit-color">delete</mat-icon>
+                            </button>
+                        </div>
+
+                        <div *ngIf="invoiceToEdit[getIndex(indexInvoice)]">
+                            <button mat-icon-button
+                                    matTooltip="Annuler"
+                                    matTooltipPosition="right"
+                                    matTooltipShowDelay="350"
+                                    [disabled]="isLoadingData"
+                                    (click)="toggleEditMode(getIndex(indexInvoice))">
+                                <mat-icon class="icon-edit-color">undo</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            </table>
+
+            <mat-paginator class="table-pagination"
+                           [pageSizeOptions]="[5, 10, 15, 20]"
+                           [pageSize]="10"
+                           [showFirstLastButtons]=false
+                           (page)="doRequestIfLastPage($event)"></mat-paginator>
+        </div>
+        <div style="text-align: right" [style.visibility]="editMode()? 'visible': 'hidden'">
+            <span class="required-field" style="font-family: 'Roboto Light', 'sans-serif'; font-size: 0.72em;">*champs requis</span>
+        </div>
+    </div>
+</div>

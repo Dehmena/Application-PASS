@@ -1,0 +1,133 @@
+.main-content {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 925px;
+    min-width: 800px;
+}
+
+.content {
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+.column-document-number {
+    width: 20% !important;
+}
+
+.header-document-number {
+    width: 20% !important;
+}
+
+.row-document-number {
+}
+
+.column-date {
+    width: 15% !important;
+
+}
+
+.header-date {
+    width: 15% !important;
+
+}
+
+.row-date {
+}
+
+.column-total-amount {
+    width: 18% !important;
+
+}
+
+.header-total-amount {
+    width: 18% !important;
+
+}
+
+.row-total-amount {
+}
+
+.column-client-number {
+    width: 17% !important;
+
+}
+
+.header-client-number {
+    width: 17% !important;
+
+}
+
+.row-client-number {
+}
+
+.column-state {
+    width: 15% !important;
+
+}
+
+.header-state {
+    width: 15% !important;
+}
+
+.row-state {
+}
+
+.column-separation {
+}
+
+.header-separation {
+    width: 1% !important;
+}
+
+
+.column-edit {
+}
+
+.header-edit {
+    width: 0.01% !important;
+}
+
+.row-edit {
+}
+
+
+.input-document-number {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-date {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-total-amount {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-client-number {
+    width: 90% !important;
+    padding-top: 2px !important;
+}
+
+.input-state {
+    display: flex;
+    justify-content: space-between;
+    width: 80% !important;
+    cursor: pointer;
+}
+
+.menu-button:hover .icon-waiting{
+    color: rgba(247,194,45,0.94);
+}
+
+.menu-button:hover .icon-validated{
+    color: rgba(83,185,74,0.97);
+}
+
+.menu-button:hover .icon-cancel{
+    color: rgba(232,65,57,0.89);
+}

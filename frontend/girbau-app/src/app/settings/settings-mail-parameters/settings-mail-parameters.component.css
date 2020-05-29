@@ -1,0 +1,17 @@
+.width-title{
+    width: 300px;
+    min-width: 300px;
+}
+
+.width-content{
+    width: 525px;
+    max-width: 525px;
+}
+
+.width-input{
+    width: 100%;
+}
+
+.category-input{
+    font-size: 1.00em;
+}

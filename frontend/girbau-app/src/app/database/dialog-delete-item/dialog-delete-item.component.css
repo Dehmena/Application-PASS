@@ -1,0 +1,25 @@
+.title-dialog {
+    display: flex;
+    justify-content: space-between;
+    background: var(--primary);
+    color: white;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 15px;
+    padding-right: 10px;
+    font-size: 1.15em;
+    margin: 0;
+}
+
+.content-dialog {
+    font-family: Roboto, sans-serif;
+    font-size: 1.10em;
+    margin-top: 8px;
+    margin-left: -9px;
+    width: 443px;
+    padding-right: 0;
+}
+
+.action-dialog{
+    margin-left: 15px;
+}

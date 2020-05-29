@@ -1,0 +1,34 @@
+.regex-document-category-title {
+    padding-top: 18px;
+}
+
+.regex-document-category {
+    padding-top: 5px;
+    max-width: max-content;
+    display: flex;
+}
+
+.regex-title {
+    text-align: right;
+    padding-right: 36px;
+}
+
+.width-title {
+    width: 250px;
+    min-width: 275px;
+    margin-right: 20px;
+}
+
+.width-content {
+    width: 525px;
+    max-width: 525px;
+}
+
+.width-input {
+    width: 100%;
+}
+
+
+.category-input {
+    font-size: 1.02em;
+}

@@ -1,0 +1,50 @@
+<div class="title-dialog" mat-dialog-title>
+    <span>Création d'un client</span>
+    <mat-icon class="no-select" style="margin-top: 4px !important;">add_box</mat-icon>
+</div>
+
+<mat-dialog-content class="content-dialog">
+    <div class="data-category-edit">
+        <div class="data-category-title">Numéro<span
+            class="required-field">*</span></div>
+
+        <input class="data-category-input"
+               placeholder="Numéro du client..."
+               type="number"
+               (keypress)="onlyNumber($event)"
+               (paste)="pasteOnlyNumber($event)"
+               (input)="limitInput($event, 15)"
+               step="1"
+               [(ngModel)]="dataToInsert['clientNumber']">
+    </div>
+
+    <div class="data-category-edit">
+        <span class="data-category-title">Nom<span class="required-field">*</span></span>
+
+        <input class="data-category-input"
+               placeholder="Nom du client..."
+               type="text"
+               maxlength=100
+               [(ngModel)]="dataToInsert['clientName']">
+    </div>
+
+    <div class="data-category-edit">
+        <span class="data-category-title">Adresse e-mail<span class="required-field">*</span></span>
+
+        <input class="data-category-input"
+               placeholder="Adresse e-mail du client..."
+               type="text"
+               maxlength=100
+               [(ngModel)]="dataToInsert['clientMail']">
+    </div>
+
+    <div style="text-align: right">
+        <span class="required-field" style="font-family: 'Roboto Light', 'sans-serif'; font-size: 0.71em;">*champs requis</span>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="action-dialog">
+    <button mat-raised-button class="button-blue button-disabled" [disabled]="isLoadingInsertData" style="width: 100px" (click)="addData()">Ajouter</button>
+    <button mat-raised-button class="button-black button-disabled" [disabled]="isLoadingInsertData" style="width: 100px" (click)="closeDialog()">Annuler</button>
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingInsertData" [diameter]="28"></mat-spinner>
+</mat-dialog-actions>

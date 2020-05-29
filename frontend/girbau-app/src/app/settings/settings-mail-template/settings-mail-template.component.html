@@ -1,0 +1,66 @@
+<div *ngIf="isGetParametersLoading" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+<div [hidden]="isGetParametersLoading||!isGetParametersSuccessful" class="main-content">
+    <mat-card style="padding-top: 0" class="settings-content mat-elevation-z5">
+        <mat-card-content style="margin: 0; padding: 0">
+
+            <div class="category-mail-template">
+                <div class="category-title width-title">
+                    Objet
+                </div>
+
+                <div class="category-content width-content">
+                    <span *ngIf="!isEditingMailTemplate">{{mailTemplate['subject']}}</span>
+                    <input *ngIf="isEditingMailTemplate"
+                           type="text"
+                           placeholder="Objet de l'e-mail..."
+                           class="width-input category-input"
+                           [(ngModel)]="mailTemplateUpdated['subject']">
+                </div>
+
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div style="padding-top: 8px;">
+                <div class="category-title" style="padding-bottom: 5px">
+                    Corps de l'e-mail
+                </div>
+                <quill-editor *ngIf="!isEditingMailTemplate"
+                              [(ngModel)]="mailTemplate['body']"
+                              [readOnly]="true"
+                              [modules]="{toolbar: false}"
+                              [placeholder]="'Passez en mode Edition pour définir le modèle d\'e-mail...'">
+                </quill-editor>
+
+                <quill-editor *ngIf="isEditingMailTemplate"
+                              [(ngModel)]="mailTemplateUpdated['body']"
+                              format="html"
+                              [modules]="toolbar"
+                              [placeholder]="'Écrivez le corps de l\'e-mail ici...'"
+                              [preserveWhitespace]="true">
+
+                </quill-editor>
+            </div>
+
+        </mat-card-content>
+
+        <mat-card-actions *ngIf="!isEditingMailTemplate" style="margin-top: 10px; padding-left: 7px;" align="start">
+            <button mat-raised-button class="button-black" (click)=toggleEditModeMailTemplate()>Modifier le modèle
+                d'e-mail
+            </button>
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="isEditingMailTemplate" align="start" style="margin-top: 10px; padding-left: 7px; align-items: center; display: flex">
+            <button mat-raised-button class="button-blue button-disabled" [disabled]="isUpdateMailTemplateLoading"
+                    style="width: 100px" (click)=updateMailTemplate()>Valider
+            </button>
+            <button mat-raised-button class="button-black button-disabled" [disabled]="isUpdateMailTemplateLoading"
+                    style="width: 100px" (click)=toggleEditModeMailTemplate()>Annuler
+            </button>
+            <mat-spinner style="margin-left: 8px" [diameter]="30" *ngIf="isUpdateMailTemplateLoading"></mat-spinner>
+        </mat-card-actions>
+    </mat-card>
+</div>

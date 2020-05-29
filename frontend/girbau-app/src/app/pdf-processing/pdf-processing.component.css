@@ -1,0 +1,247 @@
+.main {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1180px;
+}
+
+.content {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.drop-zone {
+    height: 100%;
+    width: 100%;
+}
+
+.drop-content {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: inherit;
+    vertical-align: center !important;
+    color: #F17056;
+}
+
+.drop-content-text {
+    font-size: 1.20em;
+    font-family: "Roboto Light Italic", sans-serif;
+    max-width: 450px;
+    text-align: left;
+}
+
+.icon-upload-file {
+    font-size: 4.50em;
+    margin-top: -8px;
+}
+
+.pdf-content {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 5%;
+}
+
+.pdf-viewer-content {
+    width: 55%;
+    border-radius: 5px;
+    border-top: 7px solid var(--primary);
+    border-bottom: 7px solid var(--primary);
+}
+
+.data-card {
+    max-width: 482px;
+    padding: 0;
+    border-bottom: 7px solid var(--primary);
+}
+
+.data-extracted-content {
+    width: 45%;
+    margin-right: 2%;
+}
+
+.data-extracted-title {
+    display: flex;
+    justify-content: space-between;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background: var(--primary);
+    color: white;
+    padding: 7px 15px;
+    font-family: "Roboto Medium", "sans-serif";
+    font-size: 1.15em;
+    margin: 0;
+}
+
+.data-title {
+    margin-right: 5px;
+}
+
+.divider-color {
+    border-top-color: rgba(173, 160, 155, 0.3);
+}
+
+.divider-document-client {
+    border-top: 3px solid var(--primary-accent)
+}
+
+.data-category {
+    padding-top: 10px;
+    height: 60px;
+}
+
+.data-category-title {
+    font-family: Roboto, "Helvetica Neue", "sans-serif";
+    font-size: 0.90em;
+    color: rgba(32, 36, 64, 0.83);
+}
+
+.data-category-content {
+    width: 100%;
+    font-family: Roboto, sans-serif;
+    font-size: 1.20em;
+    margin-top: -3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.data-category-edit {
+    padding-top: 5px;
+    height: 60px;
+}
+
+.data-category-edit-client {
+    padding-top: 8px;
+    height: 60px;
+}
+
+.data-category-input {
+    width: 100% !important;
+    border: 1px solid rgb(203, 203, 203);
+    border-radius: 1px;
+    font-size: 1.10em;
+    padding-left: 5px;
+    height: 28px;
+}
+
+.data-action {
+    margin-bottom: 15px;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-left: 15px;
+    padding-bottom: 15px !important;
+}
+
+.pdf-processing-loading {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    margin-bottom: 5px !important;
+    margin-left: -10px !important;
+}
+
+.button-start-processing {
+    border: 1px solid #6985e6;
+    color: rgba(79, 89, 230, 0.98);
+    box-shadow: 1px 1px 2px rgba(0.0, 0.0, 0.0, 0.7);
+    font-family: "Roboto Medium", "sans-serif";
+    margin-right: 10px !important;
+    margin-top: 10px !important;
+}
+
+.button-start-processing:disabled {
+    border: 1px solid #a6a8a6;
+}
+
+.button-toggle-edit {
+    border: 1px solid rgb(142, 142, 145);
+    color: rgba(53, 53, 55, 0.98);
+    box-shadow: 1px 1px 2px rgba(0.0, 0.0, 0.0, 0.7);
+    font-family: "Roboto Medium", "sans-serif";
+    margin-left: 0 !important;
+    margin-top: 10px !important;
+    width: 175px;
+}
+
+.button-toggle-edit:disabled {
+    border: 1px solid #a6a8a6;
+}
+
+.button-update-data {
+    border: 1px solid #6985e6;
+    color: rgba(79, 89, 230, 0.98);
+    box-shadow: 1px 1px 2px rgba(0.0, 0.0, 0.0, 0.7);
+    font-family: "Roboto Medium", "sans-serif";
+    width: 100px;
+}
+
+.button-cancel-edit {
+    width: 100px;
+}
+
+.button-start-processing:focus {
+    outline: none;
+}
+
+@media screen and (max-width: 1000px) {
+    .pdf-viewer-content {
+        display: none;
+    }
+
+    .data-extracted-content {
+        width: 100%;
+        margin-right: 0;
+        min-width: 450px;
+    }
+
+    .data-card {
+        max-width: initial;
+    }
+}
+
+.icon-edit {
+    margin-top: 1px;
+    animation-duration: 0.4s;
+    animation-name: toggle-edit-mode;
+}
+
+@keyframes toggle-edit-mode {
+    0% {
+        font-size: 24px;
+    }
+
+    35% {
+        font-size: 30px;
+    }
+
+    100% {
+        font-size: 24px;
+    }
+}
+
+.icon-calendar {
+    position: absolute;
+    right: 3px;
+    top: -2px;
+    color: #888888;
+    cursor: pointer;
+}
+
+.input-calendar {
+    cursor: pointer;
+}
+
+.input-calendar:focus + .icon-calendar {
+    color: var(--secondary-accent);
+}
+
+.required-field {
+    color: var(--secondary);
+}
+
+
+

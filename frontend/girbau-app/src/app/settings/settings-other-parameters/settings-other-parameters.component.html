@@ -1,0 +1,311 @@
+<div *ngIf="isGetParametersLoading" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+
+<div [hidden]="isGetParametersLoading||!isGetParametersSuccessful" class="main-content">
+    <mat-card style="padding-top: 0" class="settings-content mat-elevation-z5">
+
+        <mat-card-content style="margin: 0; padding: 0">
+            <div class="category">
+                <div class="category-title width-title">
+                    <span>Relance de devis automatique</span>
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        <span *ngIf="otherParameters['is_quote_reminder_working']">Activée</span>
+                        <span *ngIf="!otherParameters['is_quote_reminder_working']">Désactivée</span>
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <mat-slide-toggle [(ngModel)]="otherParametersUpdated['is_quote_reminder_working']">
+                            {{otherParametersUpdated['is_quote_reminder_working'] ? 'Activée': 'Désactivée'}}
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Nombre de jours avant la première relance de devis automatique</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        {{otherParameters['days_before_first_reminder']}} {{otherParameters['days_before_first_reminder'] > 1 ? 'jours': 'jour'}}
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <input class="width-input"
+                               placeholder="Nombre de jours première relance..."
+                               type="number"
+                               (keypress)="onlyNumber($event)"
+                               (paste)="pasteOnlyNumber($event)"
+                               (input)="limitInput($event, 15)"
+                               step="1"
+                               [(ngModel)]="otherParametersUpdated['days_before_first_reminder']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Nombre de jours avant la deuxième relance de devis automatique</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        {{otherParameters['days_before_second_reminder']}} jours
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <input class="width-input"
+                               placeholder="Nombre de jours deuxième relance..."
+                               type="number"
+                               (keypress)="onlyNumber($event)"
+                               (paste)="pasteOnlyNumber($event)"
+                               (input)="limitInput($event, 15)"
+                               step="1"
+                               [(ngModel)]="otherParametersUpdated['days_before_second_reminder']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider class="divider-parameter-type"></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">
+                    <span>Annulation automatique des devis expirés</span>
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        <span *ngIf="otherParameters['is_quote_cancellation_working']">Activée</span>
+                        <span *ngIf="!otherParameters['is_quote_cancellation_working']">Désactivée</span>
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <mat-slide-toggle [(ngModel)]="otherParametersUpdated['is_quote_cancellation_working']">
+                            {{otherParametersUpdated['is_quote_cancellation_working'] ? 'Activée': 'Désactivée'}}
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Nombre de jours avant l'annulation automatique des devis</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        {{otherParameters['days_before_quote_cancellation']}} {{otherParameters['days_before_quote_cancellation'] > 1 ? 'jours': 'jour'}}
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <input class="width-input"
+                               placeholder="Nombre de jours annulation devis..."
+                               type="number"
+                               (keypress)="onlyNumber($event)"
+                               (paste)="pasteOnlyNumber($event)"
+                               (input)="limitInput($event, 15)"
+                               step="1"
+                               [(ngModel)]="otherParametersUpdated['days_before_quote_cancellation']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider class="divider-parameter-type"></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Chemin de sauvegarde des backups</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        {{dashIfEmpty(otherParameters['save_file_path_backups'])}}
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Chemin de sauvegarde backups..."
+                               class="width-input"
+                               [(ngModel)]="otherParametersUpdated['save_file_path_backups']">
+                    </div>
+                </div>
+            </div>
+            <div style="max-width: max-content; display: flex;">
+                <div class="category-title width-title"></div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters"
+                         style="display: flex; margin-top: -8px; padding-bottom: 15px;">
+                        <button mat-raised-button class="button-black button-disabled"
+                                [disabled]="isLoadingTestSavePathBackups"
+                                (click)=testSaveFilePathBackups()>Tester la validité du chemin
+                        </button>
+                        <mat-spinner style="margin-left: 8px; margin-top: 4px" [diameter]="30"
+                                     *ngIf="isLoadingTestSavePathBackups"></mat-spinner>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">
+                    <span>Nombre de backups</span>
+                    <mat-icon [hidden]="!isEditingOtherParameters"
+                              class="icon-help"
+                              (click)="toggleTooltipBackup()"
+                              #tooltipBackup="matTooltip"
+                              [matTooltip]="tooltipNumberBackups"
+                              matTooltipClass="tooltip-config"
+                              matTooltipPosition="after"
+                              (mouseenter)="$event.stopImmediatePropagation()"
+                              (mouseleave)="$event.stopImmediatePropagation()">
+                        <span *ngIf="!isTooltipBackupVisible()">help_outline</span>
+                        <span *ngIf="isTooltipBackupVisible()">help</span>
+                    </mat-icon>
+                </div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        {{otherParameters['number_of_backups']}}
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <input class="width-input"
+                               placeholder="Nombre de backups..."
+                               type="number"
+                               (keypress)="onlyNumber($event)"
+                               (paste)="pasteOnlyNumber($event)"
+                               (input)="limitInput($event, 4)"
+                               step="1"
+                               [(ngModel)]="otherParametersUpdated['number_of_backups']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider class="divider-parameter-type"></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Nombre maximum de logs</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        {{otherParameters['max_number_of_logs']}} {{otherParameters['max_number_of_logs'] > 1 ? 'logs': 'log'}}
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <input class="width-input"
+                               placeholder="Nombre maximum de logs..."
+                               type="number"
+                               (keypress)="onlyNumber($event)"
+                               (paste)="pasteOnlyNumber($event)"
+                               (input)="limitInput($event, 6)"
+                               step="1"
+                               [(ngModel)]="otherParametersUpdated['max_number_of_logs']">
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Ajouter le logo Girbau dans les fichiers PDF</div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters" class="category-content">
+                        <span *ngIf="otherParameters['add_girbau_logo_pdf']">Oui</span>
+                        <span *ngIf="!otherParameters['add_girbau_logo_pdf']">Non</span>
+                    </div>
+                    <div *ngIf="isEditingOtherParameters" class="category-input">
+                        <mat-slide-toggle (change)="removeLogoFile()" [(ngModel)]="otherParametersUpdated['add_girbau_logo_pdf']">
+                            {{otherParametersUpdated['add_girbau_logo_pdf'] ? 'Oui' : 'Non'}}
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+
+            </div>
+            <div style="max-width: max-content; display: flex;">
+                <div class="category-title width-title"></div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingOtherParameters && otherParametersUpdated['add_girbau_logo_pdf']" style="margin-top: -20px; padding-bottom: 15px;">
+                        <button mat-raised-button
+                                class="button-black button-disabled"
+                                [disabled]="isLoadingTestSavePathBackups"
+                                (click)="openDialogTestAddLogoPdf()">
+                            Tester l'ajout du logo dans les documents PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div [hidden]="!isEditingOtherParameters">
+                <mat-divider></mat-divider>
+
+                <div class="category-title width-title" style="padding-top: 15px; padding-bottom: 8px;">
+                    <span>Logo à ajouter dans les documents</span>
+                    <mat-icon [hidden]="!isEditingOtherParameters"
+                              class="icon-help"
+                              (click)="toggleTooltipLogo()"
+                              #tooltipLogo="matTooltip"
+                              [matTooltip]="tooltipLogoDocument"
+                              matTooltipClass="tooltip-config"
+                              matTooltipPosition="after"
+                              (mouseenter)="$event.stopImmediatePropagation()"
+                              (mouseleave)="$event.stopImmediatePropagation()">
+                        <span *ngIf="!isTooltipLogoVisible()">help_outline</span>
+                        <span *ngIf="isTooltipLogoVisible()">help</span>
+                    </mat-icon>
+                </div>
+
+                <div style="max-width: max-content; display: flex;">
+                    <div class="category-title width-title logo-document-title">
+                        <span>Logo pour devis</span>
+                    </div>
+
+                    <div class="width-content" style="display: flex">
+                        <input id="fileSelectorQuote" type="file" accept=".pdf" style="display: none" (change)="handleFileInput($event.target['files'], 'quote')">
+                        <button mat-raised-button
+                                class="button-black button-disabled"
+                                style="margin-bottom: 10px; min-width: initial; max-height: 38px;"
+                                [disabled]="isUpdateOtherParametersLoading || !otherParametersUpdated['add_girbau_logo_pdf']"
+                                (click)="openFileSelector('quote')">Choisir un fichier PDF</button>
+                        <span style="margin-left: 10px; word-break: break-word; margin-top: 9px">{{fileLogoQuote == null ? '' : fileLogoQuote.name}}</span>
+                    </div>
+                </div>
+                <div style="max-width: max-content; display: flex;">
+                    <div class="category-title width-title logo-document-title">
+                        <span>Logo pour commande</span>
+                    </div>
+
+                    <div class="width-content" style="display: flex">
+                        <input id="fileSelectorOrder" type="file" accept=".pdf" style="display: none" (change)="handleFileInput($event.target['files'], 'order')">
+                        <button mat-raised-button
+                                class="button-black button-disabled"
+                                style="margin-bottom: 10px; min-width: initial; max-height: 38px;"
+                                [disabled]="isUpdateOtherParametersLoading || !otherParametersUpdated['add_girbau_logo_pdf']"
+                                (click)="openFileSelector('order')">Choisir un fichier PDF</button>
+                        <span style="margin-left: 10px; word-break: break-word; margin-top: 9px">{{fileLogoOrder == null ? '' : fileLogoOrder.name}}</span>
+                    </div>
+                </div>
+                <div style="max-width: max-content; display: flex;">
+                    <div class="category-title width-title logo-document-title">
+                        <span>Logo pour facture</span>
+                    </div>
+
+                    <div class="width-content" style="padding-bottom: 15px; display: flex">
+                        <input id="fileSelectorInvoice" type="file" accept=".pdf" style="display: none" (change)="handleFileInput($event.target['files'], 'invoice')">
+                        <button mat-raised-button
+                                class="button-black button-disabled"
+                                style="min-width: initial; max-height: 38px;"
+                                [disabled]="isUpdateOtherParametersLoading || !otherParametersUpdated['add_girbau_logo_pdf']"
+                                (click)="openFileSelector('invoice')">Choisir un fichier PDF</button>
+                        <span style="margin-left: 10px; word-break: break-word; margin-top: 9px">{{fileLogoInvoice == null ? '' : fileLogoInvoice.name}}</span>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-actions *ngIf="!isEditingOtherParameters" style="margin-top: 10px;" align="start">
+            <button mat-raised-button class="button-black" (click)=toggleEditModeOtherParameters()>Modifier les paramètres
+            </button>
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="isEditingOtherParameters" align="start" style="margin-top: 10px; align-items: center; display: flex">
+            <button mat-raised-button class="button-blue button-disabled" [disabled]="isUpdateOtherParametersLoading" style="width: 100px" (click)=updateOtherParameters()>Valider</button>
+            <button mat-raised-button class="button-black button-disabled" [disabled]="isUpdateOtherParametersLoading" style="width: 100px" (click)=toggleEditModeOtherParameters()>Annuler</button>
+            <mat-spinner style="margin-left: 8px" [diameter]="30" *ngIf="isUpdateOtherParametersLoading"></mat-spinner>
+        </mat-card-actions>
+    </mat-card>
+</div>

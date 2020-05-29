@@ -1,0 +1,182 @@
+<div *ngIf="isGetParametersLoading" class="mat-spinner-loading-page">
+    <mat-spinner style="display: inline-block"></mat-spinner>
+</div>
+
+<div [hidden]="isGetParametersLoading||!isGetParametersSuccessful" class="main-content">
+    <mat-card style="padding-top: 0" class="settings-content mat-elevation-z5">
+
+        <mat-card-content style="margin: 0; padding: 0">
+            <div class="regex-document-category-title">
+                <div class="category-title width-title">
+                    <span>Reconnaissance des documents</span>
+                    <mat-icon [hidden]="!isEditingPdfProcessingParameters"
+                              class="icon-help"
+                              (click)="toggleTooltipRegex()"
+                              #tooltipRegex="matTooltip"
+                              [matTooltip]="tooltipRegexDocument"
+                              matTooltipClass="tooltip-config"
+                              matTooltipPosition="after"
+                              (mouseenter)="$event.stopImmediatePropagation()"
+                              (mouseleave)="$event.stopImmediatePropagation()">
+                        <span *ngIf="!isTooltipRegexVisible()">help_outline</span>
+                        <span *ngIf="isTooltipRegexVisible()">help</span>
+                    </mat-icon>
+                </div>
+            </div>
+            <div class="regex-document-category">
+                <div class="category-title width-title regex-title">
+                    <span>Devis</span>
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters" class="category-content">
+                        {{dashIfEmpty(pdfProcessingParameters['regex_quote'])}}
+                    </div>
+                    <div *ngIf="isEditingPdfProcessingParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Reconnaissance des devis..."
+                               class="width-input"
+                               [(ngModel)]="pdfProcessingParametersUpdated['regex_quote']">
+                    </div>
+                </div>
+            </div>
+            <div class="regex-document-category">
+                <div class="category-title width-title regex-title">
+                    <span>Commande</span>
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters" class="category-content">
+                        {{dashIfEmpty(pdfProcessingParameters['regex_order'])}}
+                    </div>
+
+                    <div *ngIf="isEditingPdfProcessingParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Reconnaissance des commandes..."
+                               class="width-input"
+                               [(ngModel)]="pdfProcessingParametersUpdated['regex_order']">
+                    </div>
+                </div>
+            </div>
+            <div class="regex-document-category">
+                <div class="category-title width-title regex-title">
+                    <span>Facture</span>
+                </div>
+
+                <div class="width-content" style="padding-bottom: 15px;">
+                    <div *ngIf="!isEditingPdfProcessingParameters" class="category-content">
+                        {{dashIfEmpty(pdfProcessingParameters['regex_invoice'])}}
+                    </div>
+
+                    <div *ngIf="isEditingPdfProcessingParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Reconnaissance des factures..."
+                               class="width-input"
+                               [(ngModel)]="pdfProcessingParametersUpdated['regex_invoice']">
+                    </div>
+                </div>
+            </div>
+
+            <div class="regex-document-category">
+                <div class="category-title width-title regex-title">
+                </div>
+
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters" style="margin-top: -8px; padding-bottom: 15px;">
+                        <button mat-raised-button class="button-black button-disabled"
+                                [disabled]="isLoadingTestSavePathReminder||isLoadingTestSavePathArchive"
+                                (click)=openDialogTestPdfProcessingParameters()>Tester la reconnaissance des documents
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Chemin de sauvegarde des fichiers PDF Archive</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters" class="category-content">
+                        {{dashIfEmpty(pdfProcessingParameters['save_file_path_archive'])}}
+                    </div>
+                    <div *ngIf="isEditingPdfProcessingParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Chemin de sauvegarde Archive..."
+                               class="width-input"
+                               [(ngModel)]="pdfProcessingParametersUpdated['save_file_path_archive']">
+                    </div>
+                </div>
+            </div>
+            <div style="max-width: max-content; display: flex;">
+                <div class="category-title width-title"></div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters"
+                         style="display: flex; margin-top: -8px; padding-bottom: 15px;">
+                        <button mat-raised-button class="button-black button-disabled"
+                                [disabled]="isLoadingTestSavePathReminder||isLoadingTestSavePathArchive"
+                                (click)=testSaveFilePathArchive()>Tester la validité du chemin
+                        </button>
+                        <mat-spinner style="margin-left: 8px; margin-top: 4px" [diameter]="30"
+                                     *ngIf="isLoadingTestSavePathArchive"></mat-spinner>
+                    </div>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="category">
+                <div class="category-title width-title">Chemin de sauvegarde des fichiers PDF Relance des devis</div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters" class="category-content">
+                        {{dashIfEmpty(pdfProcessingParameters['save_file_path_reminder'])}}
+                    </div>
+                    <div *ngIf="isEditingPdfProcessingParameters" class="category-input">
+                        <input type="text"
+                               placeholder="Chemin de sauvegarde Relance des devis..."
+                               class="width-input"
+                               [(ngModel)]="pdfProcessingParametersUpdated['save_file_path_reminder']">
+                    </div>
+                </div>
+            </div>
+            <div style="max-width: max-content; display: flex;">
+                <div class="category-title width-title"></div>
+                <div class="width-content">
+                    <div *ngIf="!isEditingPdfProcessingParameters"
+                         style="display: flex; margin-top: -8px; padding-bottom: 15px;">
+                        <button mat-raised-button class="button-black button-disabled"
+                                [disabled]="isLoadingTestSavePathReminder||isLoadingTestSavePathArchive"
+                                (click)=testSaveFilePathReminder()>Tester la validité du chemin
+                        </button>
+                        <mat-spinner style="margin-left: 8px; margin-top: 4px" [diameter]="30"
+                                     *ngIf="isLoadingTestSavePathReminder"></mat-spinner>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-actions *ngIf="!isEditingPdfProcessingParameters" style="margin-top: 10px" align="start">
+            <button mat-raised-button class="button-black button-disabled"
+                    [disabled]="isLoadingTestSavePathReminder||isLoadingTestSavePathArchive"
+                    (click)=toggleEditModePdfProcessingParameters()>Modifier les
+                paramètres
+            </button>
+        </mat-card-actions>
+
+        <mat-card-actions *ngIf="isEditingPdfProcessingParameters" align="start"
+                          style="align-items: center; display: flex; margin-top: 10px">
+            <button mat-raised-button class="button-blue button-disabled"
+                    [disabled]="isUpdatePdfProcessingParametersLoading"
+                    style="width: 100px" (click)=updatePdfProcessingParameters()>Valider
+            </button>
+            <button mat-raised-button class="button-black button-disabled"
+                    [disabled]="isUpdatePdfProcessingParametersLoading"
+                    style="width: 100px" (click)=toggleEditModePdfProcessingParameters()>Annuler
+            </button>
+            <mat-spinner style="margin-left: 8px" [diameter]="30"
+                         *ngIf="isUpdatePdfProcessingParametersLoading"></mat-spinner>
+        </mat-card-actions>
+
+    </mat-card>
+</div>

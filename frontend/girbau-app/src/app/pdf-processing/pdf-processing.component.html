@@ -1,0 +1,310 @@
+<div class="main">
+    <div class="content">
+        <mat-card class="mat-elevation-z5" style="min-width: 450px;">
+            <ngx-file-drop accept=".pdf" (onFileDrop)="dropped($event)" dropZoneClassName="drop-file-component">
+                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                    <div class="drop-zone" (click)="openFileSelector()">
+                        <div class="drop-content">
+                            <mat-icon class="icon-upload-file no-select" inline=true>open_in_browser</mat-icon>
+                            <span class="drop-content-text">Cliquez ici pour charger un Devis, une Commande ou une Facture au format PDF ou déposez le directement</span>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-file-drop>
+        </mat-card>
+
+        <div style="margin-top: 15px;" *ngIf="isDoneLoading">
+            <div style="text-align: center;">
+                <mat-spinner style="display: inline-block;"
+                             *ngIf="(isLoadingDisplayPdf||isLoadingDataExtraction)&&fileIsPdf"></mat-spinner>
+            </div>
+
+            <div class="pdf-content" *ngIf="!isLoadingDisplayPdf&&!isLoadingDataExtraction&&fileIsPdf">
+
+                <div class="data-extracted-content">
+                    <mat-card class="data-card" [class.mat-elevation-z5]="true">
+                        <!--------------------------------------------Données du document----------------------------------------------->
+
+                        <mat-card-title class="data-extracted-title">
+                            <span class="data-title">{{documentType}} {{data['documentData']['documentName']}}</span>
+                            <mat-icon class="icon-edit no-select" *ngIf="isEditingData">edit</mat-icon>
+                        </mat-card-title>
+
+                        <mat-card-content style="padding-left: 25px; padding-right: 25px; margin-bottom: 0;">
+                            <div *ngIf="!isEditingData">
+                                <div class="data-category">
+                                    <div class="data-category-title">Numéro document<span
+                                        class="required-field">*</span></div>
+                                    <div class="data-category-content">{{data['documentData']['documentNumber']}}</div>
+                                </div>
+
+                                <mat-divider class="divider-color"></mat-divider>
+
+                                <div class="data-category">
+                                    <div class="data-category-title">Date de création<span
+                                        class="required-field">*</span></div>
+                                    <div
+                                        class="data-category-content">{{data['documentData']['creationDate'] | date: "dd/MM/yyyy"}}</div>
+                                </div>
+
+                                <mat-divider class="divider-color"
+                                             *ngIf="data['documentData']['documentType'] == 'quote' || data['documentData']['documentType'] == 'order'"></mat-divider>
+
+                                <div class="data-category"
+                                     *ngIf="data['documentData']['documentType'] == 'quote' || data['documentData']['documentType'] == 'order'">
+                                    <div class="data-category-title">Montant total<span class="required-field">*</span>
+                                    </div>
+                                    <div class="data-category-content">{{data['documentData']['totalAmount']}} €</div>
+                                </div>
+
+                                <mat-divider class="divider-color"
+                                             *ngIf="data['documentData']['documentType'] == 'order'"></mat-divider>
+
+                                <div class="data-category"
+                                     *ngIf="data['documentData']['documentType'] == 'order'">
+                                    <div class="data-category-title">Référence de devis</div>
+                                    <div
+                                        class="data-category-content">{{data['documentData']['orderQuoteReference'] != null ? data['documentData']['orderQuoteReference'] : '-'}}</div>
+                                </div>
+
+                                <mat-divider class="divider-color"
+                                             *ngIf="data['documentData']['documentType'] == 'invoice'"></mat-divider>
+
+                                <div class="data-category"
+                                     *ngIf="data['documentData']['documentType'] == 'invoice'">
+                                    <div class="data-category-title">Référence de commande<span
+                                        class="required-field">*</span></div>
+                                    <div
+                                        class="data-category-content">{{data['documentData']['invoiceOrderReference']}}</div>
+                                </div>
+
+                                <mat-divider class="divider-document-client"></mat-divider>
+
+                                <div class="data-category">
+                                    <div class="data-category-title">Numéro client<span class="required-field">*</span>
+                                    </div>
+                                    <div class="data-category-content">{{data['clientData']['clientNumber']}}</div>
+                                </div>
+
+                                <mat-divider class="divider-color"></mat-divider>
+
+                                <div class="data-category">
+                                    <div class="data-category-title">Nom client<span class="required-field">*</span>
+                                    </div>
+                                    <div class="data-category-content">{{data['clientData']['clientName']}}</div>
+                                </div>
+
+                                <mat-divider class="divider-color"></mat-divider>
+
+                                <div class="data-category">
+                                    <div class="data-category-title">Adresse e-mail client<span
+                                        class="required-field">*</span></div>
+                                    <div class="data-category-content">{{data['clientData']['clientMail']}}</div>
+                                </div>
+
+                                <mat-divider class="divider-color"></mat-divider>
+
+                            </div>
+
+
+                            <!--########################################
+                            ################  EDIT MODE  ###############
+                            #########################################-->
+
+                            <div *ngIf="isEditingData">
+                                <div class="data-category-edit">
+                                    <div class="data-category-title">Numéro document<span
+                                        class="required-field">*</span></div>
+
+                                    <input class="data-category-input"
+                                           placeholder="Numéro du document..."
+                                           type="number"
+                                           (keypress)="onlyNumber($event)"
+                                           (paste)="pasteOnlyNumber($event)"
+                                           (input)="limitInput($event, 15)"
+                                           step="1"
+                                           [(ngModel)]="dataUpdated['documentData']['documentNumber']">
+                                </div>
+
+                                <div class="data-category-edit">
+                                    <span class="data-category-title">Date de création<span
+                                        class="required-field">*</span></span>
+                                    <span style="position:relative;">
+                                        <input class="data-category-input input-calendar" [matDatepicker]="picker"
+                                               (focus)="picker.open()" (click)="picker.open()"
+                                               (dateChange)="dataUpdated['documentData']['creationDate'] = updateDate($event)"
+                                               (keypress)="preventWriting($event); picker.open()"
+                                               (paste)="preventWriting($event); picker.open()"
+                                               [value]="toDate(dataUpdated['documentData']['creationDate'])">
+                                        <mat-icon (click)="picker.open()" class="icon-calendar no-select">today</mat-icon>
+                                        <mat-datepicker class="date-picker" #picker="matDatepicker"></mat-datepicker>
+                                    </span>
+                                </div>
+
+                                <div class="data-category-edit"
+                                     *ngIf="data['documentData']['documentType'] == 'quote' || data['documentData']['documentType'] == 'order'">
+                                    <span class="data-category-title">Montant total<span class="required-field">*</span></span>
+
+                                    <input class="data-category-input"
+                                           placeholder="Montant total..."
+                                           type="number"
+                                           step="0.01"
+                                           (keypress)="onlyFloat($event)"
+                                           (paste)="pasteOnlyFloat($event)"
+                                           (input)="limitInput($event, 15)"
+                                           [(ngModel)]="dataUpdated['documentData']['totalAmount']">
+                                </div>
+
+                                <div class="data-category-edit"
+                                     *ngIf="data['documentData']['documentType'] == 'order'">
+                                    <span class="data-category-title">Référence de devis</span>
+
+                                    <input class="data-category-input"
+                                           placeholder="Référence de devis..."
+                                           type="number"
+                                           (keypress)="onlyNumber($event)"
+                                           (paste)="pasteOnlyNumber($event)"
+                                           (input)="limitInput($event, 15)"
+                                           step="1"
+                                           [(ngModel)]="dataUpdated['documentData']['orderQuoteReference']">
+                                </div>
+
+
+                                <div class="data-category-edit"
+                                     *ngIf="data['documentData']['documentType'] == 'invoice'">
+                                    <span class="data-category-title">Référence de commande<span class="required-field">*</span></span>
+
+                                    <input class="data-category-input"
+                                           placeholder="Référence de commande..."
+                                           type="number"
+                                           (keypress)="onlyNumber($event)"
+                                           (paste)="pasteOnlyNumber($event)"
+                                           (input)="limitInput($event, 15)"
+                                           step="1"
+                                           [(ngModel)]="dataUpdated['documentData']['invoiceOrderReference']">
+
+                                </div>
+
+                                <mat-divider class="divider-document-client"></mat-divider>
+
+                                <div class="data-category-edit-client">
+                                    <span class="data-category-title">Numéro client<span class="required-field">*</span></span>
+
+                                    <input class="data-category-input"
+                                           placeholder="Numéro du client..."
+                                           type="number"
+                                           (keypress)="onlyNumber($event)"
+                                           (paste)="pasteOnlyNumber($event)"
+                                           (input)="limitInput($event, 15)"
+                                           [(ngModel)]="dataUpdated['clientData']['clientNumber']">
+
+                                </div>
+
+
+                                <div class="data-category-edit-client">
+                                    <span class="data-category-title">Nom client<span
+                                        class="required-field">*</span></span>
+
+                                    <input class="data-category-input"
+                                           placeholder="Nom du client..."
+                                           type="text"
+                                           maxlength="100"
+                                           [(ngModel)]="dataUpdated['clientData']['clientName']">
+                                </div>
+
+
+                                <div class="data-category-edit-client">
+                                    <span class="data-category-title">Adresse e-mail client<span class="required-field">*</span></span>
+
+                                    <input class="data-category-input"
+                                           placeholder="Adresse e-mail du client..."
+                                           type="text"
+                                           maxlength="100"
+                                           [(ngModel)]="dataUpdated['clientData']['clientMail']">
+                                </div>
+                            </div>
+
+                            <div class="pdf-processing-loading">
+                                <div style="display: flex"
+                                     [style.visibility]="isLoadingProcessPdf? 'visible': 'hidden'">
+                                    <div style="display: flex; min-width: 55px">
+                                        <mat-icon style="color: var(--sidenav-color);">storage</mat-icon>
+                                        <mat-spinner style="margin-top: 2px;"
+                                                     *ngIf="isLoadingInsertDatabase" [diameter]="18"></mat-spinner>
+                                        <mat-icon class="success-color" style="margin-left: -1px;"
+                                                  *ngIf="!isLoadingInsertDatabase&&isInsertDatabaseSuccessful">done
+                                        </mat-icon>
+                                        <mat-icon class="error-color" style="margin-left: -3px;"
+                                                  *ngIf="!isLoadingInsertDatabase&&!isInsertDatabaseSuccessful">clear
+                                        </mat-icon>
+                                    </div>
+
+                                    <div style="display: flex; min-width: 55px;">
+                                        <mat-icon style="color: var(--sidenav-color);">mail</mat-icon>
+                                        <mat-spinner style="margin-top: 2px;"
+                                                     *ngIf="isLoadingSendMail"
+                                                     [diameter]="18"></mat-spinner>
+                                        <mat-icon class="success-color" style="margin-left: -1px;"
+                                                  *ngIf="!isLoadingSendMail&&isSendMailSuccessful">done
+                                        </mat-icon>
+                                        <mat-icon class="error-color" style="margin-left: -3px;"
+                                                  *ngIf="!isLoadingSendMail&&!isSendMailSuccessful">clear
+                                        </mat-icon>
+
+                                    </div>
+
+                                    <div style="display: flex; min-width: 55px">
+                                        <mat-icon style="color: var(--sidenav-color)">archive</mat-icon>
+                                        <mat-spinner style="margin-top: 2px;"
+                                                     *ngIf="isLoadingSavePdfFile" [diameter]="18"></mat-spinner>
+                                        <mat-icon class="success-color" style="margin-left: -1px;"
+                                                  *ngIf="!isLoadingSavePdfFile&&isSavePdfFileSuccessful">
+                                            done
+                                        </mat-icon>
+                                        <mat-icon class="error-color" style="margin-left: -3px;"
+                                                  *ngIf="!isLoadingSavePdfFile&&!isSavePdfFileSuccessful">
+                                            clear
+                                        </mat-icon>
+                                    </div>
+                                </div>
+                                <div class="required-field"
+                                     style="font-family: 'Roboto Light', 'sans-serif'; font-size: 0.90em;">*champs
+                                    requis
+                                </div>
+                            </div>
+                        </mat-card-content>
+                        <mat-card-actions class="data-action" style="margin-top: -10px;" *ngIf="!isEditingData"
+                                          align=start>
+                            <button mat-raised-button class="button-start-processing" [disabled]="isProcessPdfDisabled"
+                                    (click)="startPdfProcessing()">
+                                Commencer le traitement
+                            </button>
+                            <button mat-raised-button class="button-toggle-edit" [disabled]="isProcessPdfDisabled" (click)="toggleEditMode()">
+                                Modifier les données
+                            </button>
+                        </mat-card-actions>
+
+                        <mat-card-actions class="data-action" *ngIf="isEditingData" align=start>
+                            <button mat-raised-button class="button-update-data" (click)="updateData()">
+                                Valider
+                            </button>
+                            <button mat-raised-button class="button-black button-cancel-edit" (click)="toggleEditMode()">
+                                Annuler
+                            </button>
+                        </mat-card-actions>
+
+                    </mat-card>
+
+                </div>
+
+                <pdf-viewer [class.mat-elevation-z5]="true"
+                            [src]="pdfDisplaySource"
+                            [render-text]="true"
+                            [original-size]="false"
+                            [show-all]="true"
+                            class="pdf-viewer-content">
+                </pdf-viewer>
+            </div>
+        </div>
+    </div>
+</div>

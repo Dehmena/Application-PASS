@@ -1,0 +1,26 @@
+.width-title {
+    width: 300px;
+    min-width: 300px;
+}
+
+.width-content{
+    width: 525px;
+    max-width: 525px;
+}
+
+.width-input{
+    width: 100%;
+}
+
+.logo-document-title{
+    text-align: right;
+    padding-right: 42px;
+}
+
+.category-input{
+    font-size: 1.10em;
+}
+
+.divider-parameter-type {
+    border-top: 3px solid var(--primary-accent)
+}

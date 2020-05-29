@@ -1,0 +1,71 @@
+<div class="title-dialog" mat-dialog-title>
+    <span>Création d'un devis</span>
+    <mat-icon class="no-select" style="margin-top: 4px !important;">add_box</mat-icon>
+</div>
+
+<mat-dialog-content class="content-dialog">
+    <div class="data-category-edit">
+        <div class="data-category-title">Numéro document<span
+            class="required-field">*</span></div>
+
+        <input class="data-category-input"
+               placeholder="Numéro du document..."
+               type="number"
+               (keypress)="onlyNumber($event)"
+               (paste)="pasteOnlyNumber($event)"
+               (input)="limitInput($event, 15)"
+               step="1"
+               [(ngModel)]="dataToInsert['quoteNumber']">
+    </div>
+
+    <div class="data-category-edit">
+        <span class="data-category-title">Date de création<span class="required-field">*</span></span>
+        <span style="position: relative">
+            <input class="data-category-input input-calendar" [matDatepicker]="picker"
+                   placeholder="Date du document..."
+                   (keypress)="preventWriting($event); picker.open()"
+                   (paste)="preventWriting($event); picker.open()"
+                   (focus)="picker.open()" (click)="picker.open()"
+                   (dateChange)="dataToInsert['quoteDate'] = updateDate($event)"
+                   [value]="toDate(dataToInsert['quoteDate'])">
+            <mat-icon (click)="picker.open()" class="icon-calendar no-select">today</mat-icon>
+            <mat-datepicker class="date-picker" #picker="matDatepicker"></mat-datepicker>
+        </span>
+    </div>
+
+    <div class="data-category-edit">
+        <span class="data-category-title">Montant total<span class="required-field">*</span></span>
+
+        <input class="data-category-input"
+               placeholder="Montant total..."
+               type="number"
+               step="0.01"
+               (keypress)="onlyFloat($event)"
+               (paste)="pasteOnlyFloat($event)"
+               (input)="limitInput($event, 15)"
+               [(ngModel)]="dataToInsert['quoteTotalAmount']">
+    </div>
+
+    <div class="data-category-edit">
+        <span class="data-category-title">Numéro client<span class="required-field">*</span></span>
+
+        <input class="data-category-input"
+               placeholder="Numéro du client..."
+               type="number"
+               (keypress)="onlyNumber($event)"
+               (paste)="pasteOnlyNumber($event)"
+               (input)="limitInput($event, 15)"
+               [(ngModel)]="dataToInsert['clientNumber']">
+
+    </div>
+    <div style="text-align: right">
+        <span class="required-field" style="font-family: 'Roboto Light', 'sans-serif'; font-size: 0.71em;">*champs requis</span>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="action-dialog">
+    <button mat-raised-button class="button-blue button-disabled" [disabled]="isLoadingInsertData" style="width: 100px" (click)="addData()">Ajouter</button>
+    <button mat-raised-button class="button-black button-disabled" [disabled]="isLoadingInsertData" style="width: 100px" (click)="closeDialog()">Annuler</button>
+    <mat-spinner style="margin-left: 10px;" *ngIf="isLoadingInsertData" [diameter]="28"></mat-spinner>
+</mat-dialog-actions>
+

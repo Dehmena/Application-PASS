@@ -1,0 +1,54 @@
+.title-dialog {
+    display: flex;
+    justify-content: space-between;
+    background: var(--primary);
+    color: white;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-size: 1.15em;
+    margin: 0;
+}
+
+.content-dialog {
+    font-family: Roboto, sans-serif;
+    font-size: 1.10em;
+    margin-top: 8px;
+    margin-left: -9px;
+    width: 695px;
+    height: 110px;
+    padding-right: 0;
+}
+
+.action-dialog{
+    margin-left: 15px;
+}
+
+.drop-zone {
+    height: 100%;
+    width: 100%;
+}
+
+
+.drop-content {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: inherit;
+    vertical-align: center !important;
+    color: #F17056;
+}
+
+.drop-content-text {
+    font-size: 1.00em;
+    font-family: "Roboto Light Italic", sans-serif;
+    max-width: 450px;
+    text-align: left;
+}
+
+.icon-upload-file {
+    font-size: 4.00em;
+    margin-top: -5px;
+}
